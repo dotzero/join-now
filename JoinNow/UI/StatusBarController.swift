@@ -22,7 +22,7 @@ final class StatusBarController {
         self.onQuit = onQuit
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
-        statusItem.button?.title = "JoinNow"
+        configureStatusItemButton()
         rebuildMenu()
 
         settings.objectWillChange
@@ -32,6 +32,20 @@ final class StatusBarController {
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func configureStatusItemButton() {
+        guard let button = statusItem.button else {
+            return
+        }
+
+        let image = NSImage(systemSymbolName: "calendar.badge.clock", accessibilityDescription: "JoinNow")
+        image?.isTemplate = true
+
+        button.title = ""
+        button.image = image
+        button.imagePosition = .imageOnly
+        button.toolTip = "JoinNow"
     }
 
     private func rebuildMenu() {
