@@ -7,53 +7,62 @@ struct SettingsView: View {
     }
 
     @ObservedObject var settings: AppSettings
+    let onPreview: () -> Void
 
     var body: some View {
-        Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
-            settingsRow("Enable JoinNow") {
-                Toggle("", isOn: enabledBinding)
-                    .labelsHidden()
-            }
+        VStack(alignment: .leading, spacing: 22) {
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
+                settingsRow("Enable JoinNow") {
+                    Toggle("", isOn: enabledBinding)
+                        .labelsHidden()
+                }
 
-            settingsRow("Show alert before event") {
-                Picker("", selection: leadTimeBinding) {
-                    ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
-                        Text("\(minutes) min").tag(minutes)
+                settingsRow("Show alert before event") {
+                    Picker("", selection: leadTimeBinding) {
+                        ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
+                            Text("\(minutes) min").tag(minutes)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                }
+
+                settingsRow("Only show events with meeting links") {
+                    Toggle("", isOn: onlyMeetingLinksBinding)
+                        .labelsHidden()
+                }
+
+                settingsRow("Alert background opacity") {
+                    HStack(spacing: 12) {
+                        Slider(
+                            value: alertBackgroundOpacityBinding,
+                            in: 0 ... 100,
+                            step: 1
+                        )
+
+                        Text("\(Int(settings.alertBackgroundOpacityPercent.rounded()))%")
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .frame(width: 44, alignment: .trailing)
                     }
                 }
-                .labelsHidden()
-                .pickerStyle(.segmented)
-            }
 
-            settingsRow("Only show events with meeting links") {
-                Toggle("", isOn: onlyMeetingLinksBinding)
-                    .labelsHidden()
-            }
+                settingsRow("Alert window color") {
+                    ColorPicker("", selection: alertBackgroundColorBinding, supportsOpacity: false)
+                        .labelsHidden()
+                }
 
-            settingsRow("Alert background opacity") {
-                HStack(spacing: 12) {
-                    Slider(
-                        value: alertBackgroundOpacityBinding,
-                        in: 0 ... 100,
-                        step: 1
-                    )
-
-                    Text("\(Int(settings.alertBackgroundOpacityPercent.rounded()))%")
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                        .frame(width: 44, alignment: .trailing)
+                settingsRow("Alert text color") {
+                    ColorPicker("", selection: alertTextColorBinding, supportsOpacity: false)
+                        .labelsHidden()
                 }
             }
 
-            settingsRow("Alert window color") {
-                ColorPicker("", selection: alertBackgroundColorBinding, supportsOpacity: false)
-                    .labelsHidden()
-            }
+            Divider()
 
-            settingsRow("Alert text color") {
-                ColorPicker("", selection: alertTextColorBinding, supportsOpacity: false)
-                    .labelsHidden()
-            }
+            Button("Preview", action: onPreview)
+                .keyboardShortcut("p")
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(24)
         .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth)

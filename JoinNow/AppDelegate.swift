@@ -29,7 +29,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarController = StatusBarController(
             settings: settings,
             onOpenSettings: { [weak self] in self?.showSettings() },
-            onShowTestAlert: { [weak self] in self?.showTestAlert() },
             onQuit: { NSApp.terminate(nil) }
         )
 
@@ -42,15 +41,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func showSettings() {
         if settingsWindow == nil {
-            let view = SettingsView(settings: settings)
+            let view = SettingsView(
+                settings: settings,
+                onPreview: { [weak self] in self?.showAlertPreview() }
+            )
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 600, height: 270),
+                contentRect: NSRect(x: 0, y: 0, width: 600, height: 320),
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
             )
             window.title = "JoinNow Settings"
-            window.minSize = NSSize(width: 600, height: 270)
+            window.minSize = NSSize(width: 600, height: 320)
             window.contentView = NSHostingView(rootView: view)
             window.center()
             window.isReleasedWhenClosed = false
@@ -61,7 +63,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
 
-    private func showTestAlert() {
-        alertWindowController?.showTestAlert()
+    func showAlertPreview() {
+        alertWindowController?.showAlertPreview()
     }
 }

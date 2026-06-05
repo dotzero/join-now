@@ -46,7 +46,7 @@ final class AlertWindowController: AlertPresenting {
         )
     }
 
-    func showTestAlert() {
+    func showAlertPreview() {
         showAlert(
             presentation: AlertPresentation(
                 title: "Design Review with Product Team",

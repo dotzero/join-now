@@ -6,7 +6,10 @@ struct JoinNowApp: App {
 
     var body: some Scene {
         Settings {
-            SettingsView(settings: appDelegate.settings)
+            SettingsView(
+                settings: appDelegate.settings,
+                onPreview: { appDelegate.showAlertPreview() }
+            )
         }
     }
 }
