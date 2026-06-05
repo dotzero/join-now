@@ -11,7 +11,7 @@ This repository contains a native macOS SwiftUI app named `JoinNow`.
 - `JoinNow/UI/` contains SwiftUI views and AppKit window/status bar controllers.
 - `JoinNow/Info.plist` and `JoinNow/JoinNow.entitlements` define Calendar privacy and sandbox configuration.
 
-There are no tests or asset catalogs yet. Add tests under a future `JoinNowTests/` target and assets under `JoinNow/Assets.xcassets/` when needed.
+Unit tests live under `JoinNowTests/`. Add assets under `JoinNow/Assets.xcassets/` when needed.
 
 ## Build, Test, and Development Commands
 
@@ -34,6 +34,12 @@ swiftformat --lint . --cache ignore
 swiftlint --strict --no-cache --config .swiftlint.yml
 ```
 
+Run tests after Swift code changes, in addition to linting:
+
+```sh
+xcodebuild test -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath /private/tmp/joinnow-derived-data
+```
+
 Open `JoinNow.xcodeproj` in Xcode to run the app locally. macOS will request Calendar access on first launch.
 
 ## Coding Style & Naming Conventions
@@ -46,7 +52,7 @@ SwiftFormat and SwiftLint are wired into Xcode build phases. If the tools are in
 
 ## Testing Guidelines
 
-No automated test target exists yet. For new logic-heavy code, add XCTest coverage in `JoinNowTests/` and name tests after behavior, for example `testExtractsGoogleMeetLinkFromNotes`.
+For new logic-heavy code, add XCTest coverage in `JoinNowTests/` and name tests after behavior, for example `testExtractsGoogleMeetLinkFromNotes`.
 
 Prioritize tests for `MeetingLinkExtractor`, `ReminderScheduler` filtering, and UserDefaults-backed settings. Manual validation should cover Calendar permission prompts, all-day/declined/ended event filtering, Dismiss behavior, and Join Meeting link opening.
 

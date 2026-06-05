@@ -18,7 +18,19 @@
 		010000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000009 /* SettingsView.swift */; };
 		010000000000000000000110 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000010 /* StatusBarController.swift */; };
 		010000000000000000000111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000014 /* Assets.xcassets */; };
+		020000000000000000000101 /* MeetingLinkExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000001 /* MeetingLinkExtractorTests.swift */; };
+		020000000000000000000102 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppSettingsTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		020000000000000000000900 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 010000000000000000000600 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 010000000000000000000400;
+			remoteInfo = JoinNow;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		010000000000000000000001 /* JoinNowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinNowApp.swift; sourceTree = "<group>"; };
@@ -35,10 +47,20 @@
 		010000000000000000000012 /* JoinNow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JoinNow.entitlements; sourceTree = "<group>"; };
 		010000000000000000000013 /* JoinNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoinNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		010000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		020000000000000000000001 /* MeetingLinkExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingLinkExtractorTests.swift; sourceTree = "<group>"; };
+		020000000000000000000002 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		020000000000000000000013 /* JoinNowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoinNowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		010000000000000000000200 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		020000000000000000000200 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -52,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				010000000000000000000301 /* JoinNow */,
+				020000000000000000000301 /* JoinNowTests */,
 				010000000000000000000302 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				010000000000000000000013 /* JoinNow.app */,
+				020000000000000000000013 /* JoinNowTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,6 +132,15 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		020000000000000000000301 /* JoinNowTests */ = {
+			isa = PBXGroup;
+			children = (
+				020000000000000000000001 /* MeetingLinkExtractorTests.swift */,
+				020000000000000000000002 /* AppSettingsTests.swift */,
+			);
+			path = JoinNowTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -130,6 +163,23 @@
 			productReference = 010000000000000000000013 /* JoinNow.app */;
 			productType = "com.apple.product-type.application";
 		};
+		020000000000000000000400 /* JoinNowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 020000000000000000000700 /* Build configuration list for PBXNativeTarget "JoinNowTests" */;
+			buildPhases = (
+				020000000000000000000500 /* Sources */,
+				020000000000000000000200 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				020000000000000000000901 /* PBXTargetDependency */,
+			);
+			name = JoinNowTests;
+			productName = JoinNowTests;
+			productReference = 020000000000000000000013 /* JoinNowTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -142,6 +192,10 @@
 				TargetAttributes = {
 					010000000000000000000400 = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					020000000000000000000400 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 010000000000000000000400;
 					};
 				};
 			};
@@ -160,6 +214,7 @@
 			projectRoot = "";
 			targets = (
 				010000000000000000000400 /* JoinNow */,
+				020000000000000000000400 /* JoinNowTests */,
 			);
 		};
 /* End PBXProject section */
@@ -234,7 +289,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		020000000000000000000500 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				020000000000000000000101 /* MeetingLinkExtractorTests.swift in Sources */,
+				020000000000000000000102 /* AppSettingsTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		020000000000000000000901 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 010000000000000000000400 /* JoinNow */;
+			targetProxy = 020000000000000000000900 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		010000000000000000000800 /* Debug */ = {
@@ -420,6 +492,58 @@
 			};
 			name = Release;
 		};
+		020000000000000000000802 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.JoinNowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+				SWIFT_WARN_CONCURRENCY = YES;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoinNow.app/Contents/MacOS/JoinNow";
+			};
+			name = Debug;
+		};
+		020000000000000000000803 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.JoinNowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
+				SWIFT_WARN_CONCURRENCY = YES;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/JoinNow.app/Contents/MacOS/JoinNow";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -437,6 +561,15 @@
 			buildConfigurations = (
 				010000000000000000000800 /* Debug */,
 				010000000000000000000801 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		020000000000000000000700 /* Build configuration list for PBXNativeTarget "JoinNowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				020000000000000000000802 /* Debug */,
+				020000000000000000000803 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
