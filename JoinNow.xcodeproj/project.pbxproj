@@ -17,6 +17,7 @@
 		010000000000000000000108 /* MeetingAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000008 /* MeetingAlertView.swift */; };
 		010000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000009 /* SettingsView.swift */; };
 		010000000000000000000110 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000010 /* StatusBarController.swift */; };
+		010000000000000000000111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000014 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		010000000000000000000011 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		010000000000000000000012 /* JoinNow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JoinNow.entitlements; sourceTree = "<group>"; };
 		010000000000000000000013 /* JoinNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoinNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		010000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 				010000000000000000000303 /* Models */,
 				010000000000000000000304 /* Services */,
 				010000000000000000000305 /* UI */,
+				010000000000000000000014 /* Assets.xcassets */,
 				010000000000000000000011 /* Info.plist */,
 				010000000000000000000012 /* JoinNow.entitlements */,
 			);
@@ -166,6 +169,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				010000000000000000000111 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
