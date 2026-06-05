@@ -77,12 +77,18 @@ final class AlertWindowController: AlertPresenting {
             defer: false
         )
 
-        panel.contentView = NSHostingView(rootView: view)
+        let hostingView = NSHostingView(rootView: view)
+        hostingView.wantsLayer = true
+        hostingView.layer?.isOpaque = false
+        hostingView.layer?.backgroundColor = NSColor.clear.cgColor
+
+        panel.contentView = hostingView
         panel.level = .screenSaver
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         panel.hidesOnDeactivate = false
         panel.isReleasedWhenClosed = false
-        panel.backgroundColor = .black
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
         panel.orderFrontRegardless()
 
         self.panel = panel

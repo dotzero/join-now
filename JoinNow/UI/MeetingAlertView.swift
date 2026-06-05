@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct MeetingAlertView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let title: String
     let startDate: Date
     let calendarTitle: String
@@ -11,24 +13,30 @@ struct MeetingAlertView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.black
+                .opacity(colorScheme == .dark ? 0.38 : 0.22)
+                .ignoresSafeArea()
 
-            VStack(spacing: 28) {
-                Text("Meeting Starting Soon")
-                    .font(.system(size: 30, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.85))
+            VStack(spacing: 34) {
+                VStack(spacing: 18) {
+                    Text("Meeting Starting Soon")
+                        .font(.system(size: 22, weight: .semibold))
+                        .textCase(.uppercase)
+                        .foregroundStyle(primaryText.opacity(0.72))
 
-                Text(title)
-                    .font(.system(size: 72, weight: .bold))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.45)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 80)
+                    Text(title)
+                        .font(.system(size: 76, weight: .bold, design: .rounded))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                        .minimumScaleFactor(0.42)
+                        .foregroundStyle(primaryText)
+                        .padding(.horizontal, 72)
+                }
 
                 HStack(spacing: 18) {
                     Text(startDate, style: .time)
-                        .font(.system(size: 34, weight: .semibold))
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
 
                     HStack(spacing: 10) {
                         Circle()
@@ -37,60 +45,85 @@ struct MeetingAlertView: View {
                         Text(calendarTitle)
                             .lineLimit(1)
                     }
-                    .font(.system(size: 26, weight: .medium))
+                    .font(.system(size: 25, weight: .medium, design: .rounded))
                 }
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(primaryText.opacity(0.86))
 
-                HStack(spacing: 16) {
+                HStack(spacing: 18) {
                     if let meetingURL {
                         Button {
                             onJoin(meetingURL)
                         } label: {
-                            Text("Join Meeting")
-                                .frame(width: 180)
+                            Label("Join Meeting", systemImage: "video.fill")
+                                .frame(width: 260)
                         }
                         .keyboardShortcut(.defaultAction)
-                        .buttonStyle(AlertPrimaryButtonStyle())
+                        .buttonStyle(AlertPrimaryButtonStyle(colorScheme: colorScheme))
                     }
 
                     Button {
                         onDismiss()
                     } label: {
-                        Text("Dismiss")
-                            .frame(width: 140)
+                        Label("Dismiss", systemImage: "xmark")
+                            .frame(width: 150)
                     }
                     .keyboardShortcut(.cancelAction)
-                    .buttonStyle(AlertSecondaryButtonStyle())
+                    .buttonStyle(AlertSecondaryButtonStyle(colorScheme: colorScheme))
                 }
-                .font(.system(size: 22, weight: .semibold))
-                .padding(.top, 18)
+                .font(.system(size: 23, weight: .semibold, design: .rounded))
+                .padding(.top, 10)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(48)
         }
     }
+
+    private var primaryText: Color {
+        colorScheme == .dark ? .white : Color(nsColor: .labelColor)
+    }
 }
 
 private struct AlertPrimaryButtonStyle: ButtonStyle {
+    let colorScheme: ColorScheme
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(.vertical, 18)
-            .background(configuration.isPressed ? Color.white.opacity(0.75) : Color.white)
-            .foregroundStyle(.black)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding(.vertical, 22)
+            .background(primaryBackground(isPressed: configuration.isPressed))
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .shadow(color: .black.opacity(colorScheme == .dark ? 0.42 : 0.24), radius: 28, y: 14)
+    }
+
+    private func primaryBackground(isPressed: Bool) -> Color {
+        if isPressed {
+            return Color.accentColor.opacity(0.78)
+        }
+
+        return Color.accentColor
     }
 }
 
 private struct AlertSecondaryButtonStyle: ButtonStyle {
+    let colorScheme: ColorScheme
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(.vertical, 18)
-            .background(configuration.isPressed ? Color.white.opacity(0.18) : Color.white.opacity(0.12))
-            .foregroundStyle(.white)
+            .padding(.vertical, 22)
+            .background(.regularMaterial)
+            .foregroundStyle(foregroundColor)
             .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.white.opacity(0.35), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(borderColor.opacity(configuration.isPressed ? 0.68 : 0.42), lineWidth: 1)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var foregroundColor: Color {
+        colorScheme == .dark ? .white : Color(nsColor: .labelColor)
+    }
+
+    private var borderColor: Color {
+        colorScheme == .dark ? .white : .black
     }
 }
