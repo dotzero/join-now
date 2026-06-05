@@ -192,8 +192,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if command -v swiftformat >/dev/null 2>&1; then\n  swiftformat --lint \"$SRCROOT\" --cache ignore\nelse\n  echo \"warning: SwiftFormat not installed. Install with: brew install swiftformat\"\nfi\n";
+			shellPath = /bin/zsh;
+			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\nif command -v swiftformat >/dev/null 2>&1; then\n  swiftformat --lint \"$SRCROOT\" --cache ignore\nelse\n  echo \"warning: SwiftFormat not installed. Install with: brew install swiftformat\"\nfi\n";
 		};
 		010000000000000000000503 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -211,8 +211,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --strict --no-cache --config \"$SRCROOT/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint not installed. Install with: brew install swiftlint\"\nfi\n";
+			shellPath = /bin/zsh;
+			shellScript = "export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\n\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --strict --no-cache --config \"$SRCROOT/.swiftlint.yml\"\nelse\n  echo \"warning: SwiftLint not installed. Install with: brew install swiftlint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
