@@ -29,6 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusBarController = StatusBarController(
             settings: settings,
             onOpenSettings: { [weak self] in self?.showSettings() },
+            onShowTestAlert: { [weak self] in self?.showTestAlert() },
             onQuit: { NSApp.terminate(nil) }
         )
 
@@ -57,5 +58,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         settingsWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func showTestAlert() {
+        alertWindowController?.showTestAlert()
     }
 }

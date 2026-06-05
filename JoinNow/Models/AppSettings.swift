@@ -11,23 +11,11 @@ final class AppSettings: ObservableObject {
 
     static let allowedLeadTimes = [1, 3, 5, 10, 15]
 
-    @Published var isEnabled: Bool {
-        didSet { defaults.set(isEnabled, forKey: Key.isEnabled) }
-    }
+    @Published private(set) var isEnabled: Bool
 
-    @Published var leadTimeMinutes: Int {
-        didSet {
-            let value = Self.allowedLeadTimes.contains(leadTimeMinutes) ? leadTimeMinutes : 5
-            defaults.set(value, forKey: Key.leadTimeMinutes)
-            if value != leadTimeMinutes {
-                leadTimeMinutes = value
-            }
-        }
-    }
+    @Published private(set) var leadTimeMinutes: Int
 
-    @Published var onlyEventsWithMeetingLink: Bool {
-        didSet { defaults.set(onlyEventsWithMeetingLink, forKey: Key.onlyEventsWithMeetingLink) }
-    }
+    @Published private(set) var onlyEventsWithMeetingLink: Bool
 
     private let defaults: UserDefaults
 
@@ -42,6 +30,34 @@ final class AppSettings: ObservableObject {
         self.isEnabled = defaults.bool(forKey: Key.isEnabled)
         self.leadTimeMinutes = Self.allowedLeadTimes.contains(storedLeadTime) ? storedLeadTime : 5
         self.onlyEventsWithMeetingLink = defaults.bool(forKey: Key.onlyEventsWithMeetingLink)
+    }
+
+    func setEnabled(_ value: Bool) {
+        guard isEnabled != value else {
+            return
+        }
+
+        isEnabled = value
+        defaults.set(value, forKey: Key.isEnabled)
+    }
+
+    func setLeadTimeMinutes(_ value: Int) {
+        let normalizedValue = Self.allowedLeadTimes.contains(value) ? value : 5
+        guard leadTimeMinutes != normalizedValue else {
+            return
+        }
+
+        leadTimeMinutes = normalizedValue
+        defaults.set(normalizedValue, forKey: Key.leadTimeMinutes)
+    }
+
+    func setOnlyEventsWithMeetingLink(_ value: Bool) {
+        guard onlyEventsWithMeetingLink != value else {
+            return
+        }
+
+        onlyEventsWithMeetingLink = value
+        defaults.set(value, forKey: Key.onlyEventsWithMeetingLink)
     }
 
     func isDismissed(alertID: String) -> Bool {

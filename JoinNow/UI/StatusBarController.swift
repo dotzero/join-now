@@ -6,12 +6,19 @@ final class StatusBarController {
     private let settings: AppSettings
     private let statusItem: NSStatusItem
     private let onOpenSettings: () -> Void
+    private let onShowTestAlert: () -> Void
     private let onQuit: () -> Void
     private var cancellables = Set<AnyCancellable>()
 
-    init(settings: AppSettings, onOpenSettings: @escaping () -> Void, onQuit: @escaping () -> Void) {
+    init(
+        settings: AppSettings,
+        onOpenSettings: @escaping () -> Void,
+        onShowTestAlert: @escaping () -> Void,
+        onQuit: @escaping () -> Void
+    ) {
         self.settings = settings
         self.onOpenSettings = onOpenSettings
+        self.onShowTestAlert = onShowTestAlert
         self.onQuit = onQuit
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -38,6 +45,14 @@ final class StatusBarController {
         enabledItem.target = self
         menu.addItem(enabledItem)
 
+        let testItem = NSMenuItem(
+            title: "Test Alert",
+            action: #selector(showTestAlert),
+            keyEquivalent: "t"
+        )
+        testItem.target = self
+        menu.addItem(testItem)
+
         menu.addItem(NSMenuItem.separator())
 
         let settingsItem = NSMenuItem(
@@ -62,12 +77,16 @@ final class StatusBarController {
     }
 
     @objc private func toggleEnabled() {
-        settings.isEnabled.toggle()
+        settings.setEnabled(!settings.isEnabled)
         rebuildMenu()
     }
 
     @objc private func openSettings() {
         onOpenSettings()
+    }
+
+    @objc private func showTestAlert() {
+        onShowTestAlert()
     }
 
     @objc private func quit() {
