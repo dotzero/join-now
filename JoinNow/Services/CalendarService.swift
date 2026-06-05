@@ -2,7 +2,12 @@ import EventKit
 import Foundation
 
 @MainActor
-final class CalendarService {
+protocol CalendarEventFetching: AnyObject {
+    func events(from startDate: Date, to endDate: Date) async -> [EKEvent]
+}
+
+@MainActor
+final class CalendarService: CalendarEventFetching {
     private let eventStore = EKEventStore()
 
     /// Calendar privacy is controlled by macOS System Settings. Sandboxed builds also

@@ -20,6 +20,7 @@
 		010000000000000000000111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000014 /* Assets.xcassets */; };
 		020000000000000000000101 /* MeetingLinkExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000001 /* MeetingLinkExtractorTests.swift */; };
 		020000000000000000000102 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppSettingsTests.swift */; };
+		020000000000000000000103 /* ReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* ReminderSchedulerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		010000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		020000000000000000000001 /* MeetingLinkExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingLinkExtractorTests.swift; sourceTree = "<group>"; };
 		020000000000000000000002 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		020000000000000000000003 /* ReminderSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSchedulerTests.swift; sourceTree = "<group>"; };
 		020000000000000000000013 /* JoinNowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JoinNowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -137,6 +139,7 @@
 			children = (
 				020000000000000000000001 /* MeetingLinkExtractorTests.swift */,
 				020000000000000000000002 /* AppSettingsTests.swift */,
+				020000000000000000000003 /* ReminderSchedulerTests.swift */,
 			);
 			path = JoinNowTests;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 			files = (
 				020000000000000000000101 /* MeetingLinkExtractorTests.swift in Sources */,
 				020000000000000000000102 /* AppSettingsTests.swift in Sources */,
+				020000000000000000000103 /* ReminderSchedulerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

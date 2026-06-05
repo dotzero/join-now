@@ -17,9 +17,10 @@ final class AlertWindowController: AlertPresenting {
         self.settings = settings
     }
 
-    func showAlert(for event: EKEvent, meetingURL: URL?) {
+    @discardableResult
+    func showAlert(for event: EKEvent, meetingURL: URL?) -> Bool {
         let alertID = ReminderScheduler.alertID(for: event)
-        showAlert(
+        return showAlert(
             presentation: AlertPresentation(
                 title: event.title ?? "Untitled Event",
                 startDate: event.startDate,
@@ -69,8 +70,11 @@ final class AlertWindowController: AlertPresenting {
         )
     }
 
-    private func showAlert(presentation: AlertPresentation) {
-        closeAlert()
+    @discardableResult
+    private func showAlert(presentation: AlertPresentation) -> Bool {
+        guard !isShowingAlert else {
+            return false
+        }
 
         let view = MeetingAlertView(
             title: presentation.title,
@@ -112,6 +116,7 @@ final class AlertWindowController: AlertPresenting {
         panel.orderFrontRegardless()
 
         self.panel = panel
+        return true
     }
 
     private func closeAlert() {

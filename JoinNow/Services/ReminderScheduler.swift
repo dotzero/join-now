@@ -4,13 +4,14 @@ import Foundation
 @MainActor
 protocol AlertPresenting: AnyObject {
     var isShowingAlert: Bool { get }
-    func showAlert(for event: EKEvent, meetingURL: URL?)
+    @discardableResult
+    func showAlert(for event: EKEvent, meetingURL: URL?) -> Bool
 }
 
 @MainActor
 final class ReminderScheduler {
     private let settings: AppSettings
-    private let calendarService: CalendarService
+    private let calendarService: CalendarEventFetching
     private let linkExtractor: MeetingLinkExtractor
     private weak var alertPresenter: AlertPresenting?
     private var timer: Timer?
@@ -19,7 +20,7 @@ final class ReminderScheduler {
 
     init(
         settings: AppSettings,
-        calendarService: CalendarService,
+        calendarService: CalendarEventFetching,
         linkExtractor: MeetingLinkExtractor,
         alertPresenter: AlertPresenting
     ) {
@@ -44,7 +45,7 @@ final class ReminderScheduler {
         timer = nil
     }
 
-    private func checkUpcomingEvents() async {
+    func checkUpcomingEvents() async {
         guard settings.isEnabled, alertPresenter?.isShowingAlert != true else {
             return
         }
@@ -53,6 +54,10 @@ final class ReminderScheduler {
         let leadTime = TimeInterval(settings.leadTimeMinutes * 60)
         let end = now.addingTimeInterval(leadTime)
         let events = await calendarService.events(from: now, to: end)
+
+        guard alertPresenter?.isShowingAlert != true else {
+            return
+        }
 
         let candidates = events.compactMap { event -> AlertCandidate? in
             guard shouldConsider(event: event, now: now) else {
@@ -76,9 +81,12 @@ final class ReminderScheduler {
             return
         }
 
+        guard alertPresenter?.showAlert(for: candidate.event, meetingURL: candidate.meetingURL) == true else {
+            return
+        }
+
         shownAlertIDs.insert(candidate.alertID)
         shownAlertStartTimestamps.insert(candidate.startTimestamp)
-        alertPresenter?.showAlert(for: candidate.event, meetingURL: candidate.meetingURL)
     }
 
     private func shouldConsider(event: EKEvent, now: Date) -> Bool {
