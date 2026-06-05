@@ -4,40 +4,68 @@ struct SettingsView: View {
     @ObservedObject var settings: AppSettings
 
     var body: some View {
-        Form {
-            Toggle("Enable JoinNow", isOn: enabledBinding)
-
-            Picker("Show alert before event", selection: leadTimeBinding) {
-                ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
-                    Text("\(minutes) min").tag(minutes)
-                }
+        Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
+            settingsRow("Enable JoinNow") {
+                Toggle("", isOn: enabledBinding)
+                    .labelsHidden()
             }
-            .pickerStyle(.segmented)
 
-            Toggle("Only show events with meeting links", isOn: onlyMeetingLinksBinding)
+            settingsRow("Show alert before event") {
+                Picker("", selection: leadTimeBinding) {
+                    ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
+                        Text("\(minutes) min").tag(minutes)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.segmented)
+            }
 
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Alert background opacity")
-                    Spacer()
+            settingsRow("Only show events with meeting links") {
+                Toggle("", isOn: onlyMeetingLinksBinding)
+                    .labelsHidden()
+            }
+
+            settingsRow("Alert background opacity") {
+                HStack(spacing: 12) {
+                    Slider(
+                        value: alertBackgroundOpacityBinding,
+                        in: 0 ... 100,
+                        step: 1
+                    )
+
                     Text("\(Int(settings.alertBackgroundOpacityPercent.rounded()))%")
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
+                        .frame(width: 44, alignment: .trailing)
                 }
-
-                Slider(
-                    value: alertBackgroundOpacityBinding,
-                    in: 0 ... 100,
-                    step: 1
-                )
             }
 
-            ColorPicker("Alert window color", selection: alertBackgroundColorBinding, supportsOpacity: false)
+            settingsRow("Alert window color") {
+                ColorPicker("", selection: alertBackgroundColorBinding, supportsOpacity: false)
+                    .labelsHidden()
+            }
 
-            ColorPicker("Alert text color", selection: alertTextColorBinding, supportsOpacity: false)
+            settingsRow("Alert text color") {
+                ColorPicker("", selection: alertTextColorBinding, supportsOpacity: false)
+                    .labelsHidden()
+            }
         }
         .padding(24)
-        .frame(width: 420)
+        .frame(width: 520)
+    }
+
+    private func settingsRow(
+        _ title: String,
+        @ViewBuilder control: () -> some View
+    ) -> some View {
+        GridRow {
+            Text(title)
+                .foregroundStyle(.primary)
+                .frame(width: 220, alignment: .leading)
+
+            control()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 
     private var enabledBinding: Binding<Bool> {
