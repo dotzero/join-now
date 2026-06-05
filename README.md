@@ -1,66 +1,87 @@
 # JoinNow
 
-JoinNow is a minimal native macOS SwiftUI menu bar app that shows a fullscreen reminder before upcoming calendar meetings.
+JoinNow is a free, native macOS menu bar app that makes upcoming meetings hard to miss.
+
+It reads your Calendar events, finds online meeting links, and shows a fullscreen reminder before a meeting starts. The goal is simple: when it is time to join a call, JoinNow puts the meeting in your face and gives you a direct action to join.
 
 ## Features
 
-- Reads Calendar events with EventKit.
-- Runs as a menu bar app.
-- Checks upcoming events every 30 seconds.
-- Shows a fullscreen alert before a meeting starts.
-- Extracts Zoom, Google Meet, and Microsoft Teams links from event title, notes, location, and URL.
-- Stores settings and dismissed alerts in UserDefaults.
+- Runs as a macOS menu bar app.
+- Reads upcoming events from Calendar via EventKit.
+- Shows fullscreen meeting reminders.
+- Supports configurable lead time: 1, 3, 5, 10, or 15 minutes.
+- Extracts Google Meet, Zoom, and Microsoft Teams links from event fields.
+- Can show alerts only for events that contain meeting links.
+- Lets you join the meeting directly from the alert.
+- Stores settings and dismissed alerts locally in UserDefaults.
 
 ## Requirements
 
-- macOS with Calendar access available.
-- Xcode 26.5 or newer.
-- No third-party dependencies.
+- macOS
+- Xcode 26.5 or newer
+- Calendar access permission
+- Optional: SwiftFormat and SwiftLint for local style checks
 
-## Run
+JoinNow has no third-party runtime dependencies.
 
-1. Open `JoinNow.xcodeproj` in Xcode.
-2. Select the `JoinNow` scheme.
+## Build From Source
+
+Clone the repository and open the project:
+
+```sh
+git clone <repository-url>
+cd join-now
+open JoinNow.xcodeproj
+```
+
+In Xcode:
+
+1. Select the `JoinNow` scheme.
+2. Select `My Mac` as the destination.
 3. Build and run.
 4. Approve Calendar access when macOS prompts.
 
-If the Calendar prompt does not appear, open System Settings and check Privacy & Security > Calendars. Sandboxed builds require the Calendar entitlement in `JoinNow/JoinNow.entitlements`; this project includes it.
-
-## Settings
-
-Open the menu bar item named `JoinNow`.
-
-- Enable or disable reminders.
-- Choose when alerts appear: 1, 3, 5, 10, or 15 minutes before the event.
-- Optionally show alerts only for events with a meeting link.
-
-## Build From Terminal
+You can also build from the terminal:
 
 ```sh
 xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug build
 ```
 
-When building from a restricted environment, pass an explicit DerivedData path:
+In restricted environments, pass an explicit DerivedData path:
 
 ```sh
 xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath /private/tmp/joinnow-derived-data build
 ```
 
-## Developer Tools
+## Calendar Permissions
 
-The project includes SwiftLint and SwiftFormat build phases. They run in lint/check mode during Xcode builds when the tools are installed. If they are missing, Xcode prints a warning and continues the build.
+JoinNow needs Calendar access to read upcoming events. If the permission prompt does not appear, open:
+
+`System Settings` -> `Privacy & Security` -> `Calendars`
+
+Sandboxed builds also require the Calendar entitlement. This project already includes it in:
+
+```text
+JoinNow/JoinNow.entitlements
+```
+
+## Developer Checks
+
+The Xcode project includes SwiftFormat and SwiftLint build phases. They run in lint/check mode when the tools are installed.
 
 Install them with Homebrew:
 
 ```sh
-brew install swiftlint swiftformat
+brew install swiftformat swiftlint
 ```
 
 Run checks manually:
 
 ```sh
-swiftformat --lint .
+swiftformat --lint . --cache ignore
 swiftlint --strict --no-cache --config .swiftlint.yml
 ```
 
-Swift compiler warnings are treated as errors in Debug and Release builds, and strict concurrency checking is enabled.
+## License
+
+[MIT](https://opensource.org/license/mit)
