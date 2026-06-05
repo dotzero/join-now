@@ -120,6 +120,7 @@ final class AlertWindowController: AlertPresenting {
     }
 
     private func closeAlert() {
+        panel?.makeFirstResponder(nil)
         panel?.close()
         panel = nil
     }

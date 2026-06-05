@@ -64,6 +64,7 @@ struct MeetingAlertView: View {
                         }
                         .keyboardShortcut(.defaultAction)
                         .buttonStyle(AlertPrimaryButtonStyle(colorScheme: colorScheme))
+                        .focusable(false)
                     } else if let talkAppURL {
                         Button {
                             onOpenTalk(talkAppURL)
@@ -73,6 +74,7 @@ struct MeetingAlertView: View {
                         }
                         .keyboardShortcut(.defaultAction)
                         .buttonStyle(AlertPrimaryButtonStyle(colorScheme: colorScheme))
+                        .focusable(false)
                     }
 
                     Button {
@@ -83,6 +85,7 @@ struct MeetingAlertView: View {
                     }
                     .keyboardShortcut(.cancelAction)
                     .buttonStyle(AlertSecondaryButtonStyle(colorScheme: colorScheme))
+                    .focusable(false)
                 }
                 .font(.system(size: 23, weight: .semibold, design: .rounded))
                 .padding(.top, 10)
