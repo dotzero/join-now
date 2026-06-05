@@ -12,12 +12,12 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 22) {
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
-                settingsRow("Enable JoinNow") {
+                settingsRow("Enabled") {
                     Toggle("", isOn: enabledBinding)
                         .labelsHidden()
                 }
 
-                settingsRow("Show alert before event") {
+                settingsRow("Alert lead time") {
                     Picker("", selection: leadTimeBinding) {
                         ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
                             Text("\(minutes) min").tag(minutes)
@@ -27,12 +27,12 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                 }
 
-                settingsRow("Only show events with meeting links") {
+                settingsRow("Events with links only") {
                     Toggle("", isOn: onlyMeetingLinksBinding)
                         .labelsHidden()
                 }
 
-                settingsRow("Alert background opacity") {
+                settingsRow("Background opacity") {
                     HStack(spacing: 12) {
                         Slider(
                             value: alertBackgroundOpacityBinding,
@@ -47,12 +47,12 @@ struct SettingsView: View {
                     }
                 }
 
-                settingsRow("Alert window color") {
+                settingsRow("Background color") {
                     ColorPicker("", selection: alertBackgroundColorBinding, supportsOpacity: false)
                         .labelsHidden()
                 }
 
-                settingsRow("Alert text color") {
+                settingsRow("Text color") {
                     ColorPicker("", selection: alertTextColorBinding, supportsOpacity: false)
                         .labelsHidden()
                 }
