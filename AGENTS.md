@@ -27,6 +27,18 @@ In restricted environments, use an explicit DerivedData path:
 xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath /private/tmp/joinnow-derived-data build
 ```
 
+The preferred wrappers are:
+
+```sh
+make build
+make test
+make lint
+make check
+make package
+```
+
+Use `make package` to create a GitHub-release-ready macOS artifact in `dist/`: a draggable `JoinNow.app` and a versioned zip archive built from the Release configuration.
+
 Run style checks manually after installing tools:
 
 ```sh

@@ -13,6 +13,7 @@ xcuserdata/
 # Xcode build products
 build/
 DerivedData/
+dist/
 com.apple.DeveloperTools/
 *.ipa
 *.dSYM.zip
