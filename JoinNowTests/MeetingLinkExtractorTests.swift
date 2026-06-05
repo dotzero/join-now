@@ -23,6 +23,15 @@ final class MeetingLinkExtractorTests: XCTestCase {
         XCTAssertEqual(url?.absoluteString, "https://teams.microsoft.com/l/meetup-join/abc")
     }
 
+    func testExtractsKtalkLink() {
+        let url = extractor.firstMeetingLink(
+            in: "Talk: https://acme.ktalk.ru/qwerty"
+        )
+
+        XCTAssertEqual(url?.host, "acme.ktalk.ru")
+        XCTAssertEqual(url?.path, "/qwerty")
+    }
+
     func testPrefersFirstSupportedProviderOrder() {
         let url = extractor.firstMeetingLink(
             in: "meet https://meet.google.com/abc-defg-hij zoom https://example.zoom.us/j/123"

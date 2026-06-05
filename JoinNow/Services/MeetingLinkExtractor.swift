@@ -7,6 +7,7 @@ struct MeetingLinkExtractor {
         #"https?://meet\.google\.com/[^\s<>"']*"#,
         #"https?://[^\s<>"']*teams\.microsoft\.com/[^\s<>"']*"#,
         #"https?://teams\.live\.com/[^\s<>"']*"#,
+        #"https?://[^\s<>"']*\.ktalk\.ru/[^\s<>"']*"#,
         #"https?://aka\.ms/[^\s<>"']*"#
     ]
 
