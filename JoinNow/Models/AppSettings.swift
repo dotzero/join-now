@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 @MainActor
 final class AppSettings: ObservableObject {
@@ -6,16 +6,28 @@ final class AppSettings: ObservableObject {
         static let isEnabled = "isEnabled"
         static let leadTimeMinutes = "leadTimeMinutes"
         static let onlyEventsWithMeetingLink = "onlyEventsWithMeetingLink"
+        static let alertBackgroundOpacityPercent = "alertBackgroundOpacityPercent"
+        static let alertBackgroundColor = "alertBackgroundColor"
+        static let alertTextColor = "alertTextColor"
         static let dismissedAlertIDs = "dismissedAlertIDs"
     }
 
     static let allowedLeadTimes = [1, 3, 5, 10, 15]
+    static let defaultAlertBackgroundOpacityPercent = 30.0
+    static let defaultAlertBackgroundColor = Color.black
+    static let defaultAlertTextColor = Color.white
 
     @Published private(set) var isEnabled: Bool
 
     @Published private(set) var leadTimeMinutes: Int
 
     @Published private(set) var onlyEventsWithMeetingLink: Bool
+
+    @Published private(set) var alertBackgroundOpacityPercent: Double
+
+    @Published private(set) var alertBackgroundColor: Color
+
+    @Published private(set) var alertTextColor: Color
 
     private let defaults: UserDefaults
 
@@ -30,6 +42,23 @@ final class AppSettings: ObservableObject {
         self.isEnabled = defaults.bool(forKey: Key.isEnabled)
         self.leadTimeMinutes = Self.allowedLeadTimes.contains(storedLeadTime) ? storedLeadTime : 5
         self.onlyEventsWithMeetingLink = defaults.bool(forKey: Key.onlyEventsWithMeetingLink)
+        if defaults.object(forKey: Key.alertBackgroundOpacityPercent) == nil {
+            self.alertBackgroundOpacityPercent = Self.defaultAlertBackgroundOpacityPercent
+        } else {
+            self.alertBackgroundOpacityPercent = Self.normalizedAlertBackgroundOpacityPercent(
+                defaults.double(forKey: Key.alertBackgroundOpacityPercent)
+            )
+        }
+        self.alertBackgroundColor = Self.color(
+            forKey: Key.alertBackgroundColor,
+            defaultValue: Self.defaultAlertBackgroundColor,
+            defaults: defaults
+        )
+        self.alertTextColor = Self.color(
+            forKey: Key.alertTextColor,
+            defaultValue: Self.defaultAlertTextColor,
+            defaults: defaults
+        )
     }
 
     func setEnabled(_ value: Bool) {
@@ -60,6 +89,26 @@ final class AppSettings: ObservableObject {
         defaults.set(value, forKey: Key.onlyEventsWithMeetingLink)
     }
 
+    func setAlertBackgroundOpacityPercent(_ value: Double) {
+        let normalizedValue = Self.normalizedAlertBackgroundOpacityPercent(value)
+        guard alertBackgroundOpacityPercent != normalizedValue else {
+            return
+        }
+
+        alertBackgroundOpacityPercent = normalizedValue
+        defaults.set(normalizedValue, forKey: Key.alertBackgroundOpacityPercent)
+    }
+
+    func setAlertBackgroundColor(_ value: Color) {
+        alertBackgroundColor = value
+        Self.setColor(value, forKey: Key.alertBackgroundColor, defaults: defaults)
+    }
+
+    func setAlertTextColor(_ value: Color) {
+        alertTextColor = value
+        Self.setColor(value, forKey: Key.alertTextColor, defaults: defaults)
+    }
+
     func isDismissed(alertID: String) -> Bool {
         dismissedAlertIDs.contains(alertID)
     }
@@ -72,5 +121,35 @@ final class AppSettings: ObservableObject {
 
     private var dismissedAlertIDs: Set<String> {
         Set(defaults.stringArray(forKey: Key.dismissedAlertIDs) ?? [])
+    }
+
+    private static func normalizedAlertBackgroundOpacityPercent(_ value: Double) -> Double {
+        min(max(value, 0), 100)
+    }
+
+    private static func color(forKey key: String, defaultValue: Color, defaults: UserDefaults) -> Color {
+        guard let components = defaults.array(forKey: key) as? [Double],
+              components.count == 4
+        else {
+            return defaultValue
+        }
+
+        return Color(
+            red: min(max(components[0], 0), 1),
+            green: min(max(components[1], 0), 1),
+            blue: min(max(components[2], 0), 1),
+            opacity: min(max(components[3], 0), 1)
+        )
+    }
+
+    private static func setColor(_ color: Color, forKey key: String, defaults: UserDefaults) {
+        guard let color = NSColor(color).usingColorSpace(.deviceRGB) else {
+            return
+        }
+
+        defaults.set(
+            [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent],
+            forKey: key
+        )
     }
 }

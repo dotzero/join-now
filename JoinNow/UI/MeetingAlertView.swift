@@ -9,14 +9,17 @@ struct MeetingAlertView: View {
     let calendarColor: Color
     let meetingURL: URL?
     let talkAppURL: URL?
+    let backgroundColor: Color
+    let backgroundOpacityPercent: Double
+    let textColor: Color
     let onJoin: (URL) -> Void
     let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
 
     var body: some View {
         ZStack {
-            Color.black
-                .opacity(colorScheme == .dark ? 0.38 : 0.22)
+            backgroundColor
+                .opacity(backgroundOpacityPercent / 100)
                 .ignoresSafeArea()
 
             VStack(spacing: 34) {
@@ -24,14 +27,14 @@ struct MeetingAlertView: View {
                     Text("Meeting Starting Soon")
                         .font(.system(size: 22, weight: .semibold))
                         .textCase(.uppercase)
-                        .foregroundStyle(primaryText.opacity(0.72))
+                        .foregroundStyle(textColor.opacity(0.72))
 
                     Text(title)
                         .font(.system(size: 76, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                         .lineLimit(3)
                         .minimumScaleFactor(0.42)
-                        .foregroundStyle(primaryText)
+                        .foregroundStyle(textColor)
                         .padding(.horizontal, 72)
                 }
 
@@ -49,7 +52,7 @@ struct MeetingAlertView: View {
                     }
                     .font(.system(size: 25, weight: .medium, design: .rounded))
                 }
-                .foregroundStyle(primaryText.opacity(0.86))
+                .foregroundStyle(textColor.opacity(0.86))
 
                 HStack(spacing: 18) {
                     if let meetingURL {
@@ -87,10 +90,6 @@ struct MeetingAlertView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(48)
         }
-    }
-
-    private var primaryText: Color {
-        colorScheme == .dark ? .white : Color(nsColor: .labelColor)
     }
 }
 

@@ -79,6 +79,9 @@ final class AlertWindowController: AlertPresenting {
             calendarColor: presentation.calendarColor,
             meetingURL: presentation.meetingURL,
             talkAppURL: presentation.talkAppURL,
+            backgroundColor: settings.alertBackgroundColor,
+            backgroundOpacityPercent: settings.alertBackgroundOpacityPercent,
+            textColor: settings.alertTextColor,
             onJoin: presentation.onJoin,
             onOpenTalk: presentation.onOpenTalk,
             onDismiss: presentation.onDismiss
