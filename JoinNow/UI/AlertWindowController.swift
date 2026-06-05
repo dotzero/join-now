@@ -29,16 +29,16 @@ final class AlertWindowController: AlertPresenting {
                 talkAppURL: Self.talkAppURL(meetingURL: meetingURL),
                 onJoin: { [weak self] url in
                     NSWorkspace.shared.open(url)
-                    self?.settings.dismiss(alertID: alertID)
+                    self?.settings.dismiss(alertID: alertID, startDate: event.startDate)
                     self?.closeAlert()
                 },
                 onOpenTalk: { [weak self] url in
                     self?.openTalk(at: url)
-                    self?.settings.dismiss(alertID: alertID)
+                    self?.settings.dismiss(alertID: alertID, startDate: event.startDate)
                     self?.closeAlert()
                 },
                 onDismiss: { [weak self] in
-                    self?.settings.dismiss(alertID: alertID)
+                    self?.settings.dismiss(alertID: alertID, startDate: event.startDate)
                     self?.closeAlert()
                 }
             )

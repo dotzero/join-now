@@ -10,6 +10,7 @@ final class AppSettings: ObservableObject {
         static let alertBackgroundColor = "alertBackgroundColor"
         static let alertTextColor = "alertTextColor"
         static let dismissedAlertIDs = "dismissedAlertIDs"
+        static let dismissedAlertStartTimestamps = "dismissedAlertStartTimestamps"
     }
 
     static let allowedLeadTimes = [1, 3, 5, 10, 15]
@@ -113,14 +114,35 @@ final class AppSettings: ObservableObject {
         dismissedAlertIDs.contains(alertID)
     }
 
+    func isDismissed(alertID: String, startDate: Date) -> Bool {
+        isDismissed(alertID: alertID)
+            || dismissedAlertStartTimestamps.contains(Self.alertStartTimestamp(for: startDate))
+    }
+
     func dismiss(alertID: String) {
         var ids = dismissedAlertIDs
         ids.insert(alertID)
         defaults.set(Array(ids), forKey: Key.dismissedAlertIDs)
     }
 
+    func dismiss(alertID: String, startDate: Date) {
+        dismiss(alertID: alertID)
+
+        var timestamps = dismissedAlertStartTimestamps
+        timestamps.insert(Self.alertStartTimestamp(for: startDate))
+        defaults.set(Array(timestamps), forKey: Key.dismissedAlertStartTimestamps)
+    }
+
     private var dismissedAlertIDs: Set<String> {
         Set(defaults.stringArray(forKey: Key.dismissedAlertIDs) ?? [])
+    }
+
+    private var dismissedAlertStartTimestamps: Set<Int> {
+        Set(defaults.array(forKey: Key.dismissedAlertStartTimestamps) as? [Int] ?? [])
+    }
+
+    private static func alertStartTimestamp(for startDate: Date) -> Int {
+        Int(startDate.timeIntervalSince1970)
     }
 
     private static func normalizedAlertBackgroundOpacityPercent(_ value: Double) -> Double {

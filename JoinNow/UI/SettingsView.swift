@@ -1,6 +1,11 @@
 import SwiftUI
 
 struct SettingsView: View {
+    private enum Layout {
+        static let contentWidth: CGFloat = 600
+        static let labelWidth: CGFloat = 220
+    }
+
     @ObservedObject var settings: AppSettings
 
     var body: some View {
@@ -51,7 +56,7 @@ struct SettingsView: View {
             }
         }
         .padding(24)
-        .frame(width: 520)
+        .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth)
     }
 
     private func settingsRow(
@@ -61,7 +66,7 @@ struct SettingsView: View {
         GridRow {
             Text(title)
                 .foregroundStyle(.primary)
-                .frame(width: 220, alignment: .leading)
+                .frame(width: Layout.labelWidth, alignment: .leading)
 
             control()
                 .frame(maxWidth: .infinity, alignment: .leading)
