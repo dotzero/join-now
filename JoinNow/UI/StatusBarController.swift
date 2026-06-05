@@ -39,8 +39,9 @@ final class StatusBarController {
             return
         }
 
-        let image = NSImage(systemSymbolName: "calendar.badge.clock", accessibilityDescription: "JoinNow")
+        let image = NSImage(named: "ToolbarIcon")
         image?.isTemplate = true
+        image?.accessibilityDescription = "JoinNow"
 
         button.title = ""
         button.image = image
