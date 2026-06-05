@@ -4,6 +4,8 @@ import SwiftUI
 
 @MainActor
 final class AlertWindowController: AlertPresenting {
+    private static let talkBundleIdentifier = "kontur.talk"
+
     private let settings: AppSettings
     private var panel: NSPanel?
 
@@ -24,8 +26,14 @@ final class AlertWindowController: AlertPresenting {
                 calendarTitle: event.calendar.title,
                 calendarColor: Color(nsColor: NSColor(cgColor: event.calendar.cgColor) ?? .systemRed),
                 meetingURL: meetingURL,
+                talkAppURL: Self.talkAppURL(meetingURL: meetingURL),
                 onJoin: { [weak self] url in
                     NSWorkspace.shared.open(url)
+                    self?.settings.dismiss(alertID: alertID)
+                    self?.closeAlert()
+                },
+                onOpenTalk: { [weak self] url in
+                    self?.openTalk(at: url)
                     self?.settings.dismiss(alertID: alertID)
                     self?.closeAlert()
                 },
@@ -45,8 +53,13 @@ final class AlertWindowController: AlertPresenting {
                 calendarTitle: "Test Calendar",
                 calendarColor: .red,
                 meetingURL: URL(string: "https://meet.google.com/abc-defg-hij"),
+                talkAppURL: nil,
                 onJoin: { [weak self] url in
                     NSWorkspace.shared.open(url)
+                    self?.closeAlert()
+                },
+                onOpenTalk: { [weak self] url in
+                    self?.openTalk(at: url)
                     self?.closeAlert()
                 },
                 onDismiss: { [weak self] in
@@ -65,7 +78,9 @@ final class AlertWindowController: AlertPresenting {
             calendarTitle: presentation.calendarTitle,
             calendarColor: presentation.calendarColor,
             meetingURL: presentation.meetingURL,
+            talkAppURL: presentation.talkAppURL,
             onJoin: presentation.onJoin,
+            onOpenTalk: presentation.onOpenTalk,
             onDismiss: presentation.onDismiss
         )
 
@@ -98,6 +113,21 @@ final class AlertWindowController: AlertPresenting {
         panel?.close()
         panel = nil
     }
+
+    private static func talkAppURL(meetingURL: URL?) -> URL? {
+        guard meetingURL == nil else {
+            return nil
+        }
+
+        return NSWorkspace.shared.urlForApplication(withBundleIdentifier: talkBundleIdentifier)
+    }
+
+    private func openTalk(at url: URL) {
+        NSWorkspace.shared.openApplication(
+            at: url,
+            configuration: NSWorkspace.OpenConfiguration()
+        )
+    }
 }
 
 private struct AlertPresentation {
@@ -106,6 +136,8 @@ private struct AlertPresentation {
     let calendarTitle: String
     let calendarColor: Color
     let meetingURL: URL?
+    let talkAppURL: URL?
     let onJoin: (URL) -> Void
+    let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
 }

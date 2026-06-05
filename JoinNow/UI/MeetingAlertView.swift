@@ -8,7 +8,9 @@ struct MeetingAlertView: View {
     let calendarTitle: String
     let calendarColor: Color
     let meetingURL: URL?
+    let talkAppURL: URL?
     let onJoin: (URL) -> Void
+    let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
 
     var body: some View {
@@ -56,6 +58,15 @@ struct MeetingAlertView: View {
                         } label: {
                             Label("Join Meeting", systemImage: "video.fill")
                                 .frame(width: 260)
+                        }
+                        .keyboardShortcut(.defaultAction)
+                        .buttonStyle(AlertPrimaryButtonStyle(colorScheme: colorScheme))
+                    } else if let talkAppURL {
+                        Button {
+                            onOpenTalk(talkAppURL)
+                        } label: {
+                            Label("Open Talk", systemImage: "bubble.left.and.bubble.right.fill")
+                                .frame(width: 240)
                         }
                         .keyboardShortcut(.defaultAction)
                         .buttonStyle(AlertPrimaryButtonStyle(colorScheme: colorScheme))
