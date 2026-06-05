@@ -88,12 +88,13 @@ final class AlertWindowController: AlertPresenting {
         )
 
         let screenFrame = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 1280, height: 800)
-        let panel = NSPanel(
+        let panel = AlertPanel(
             contentRect: screenFrame,
             styleMask: [.borderless, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
+        panel.onCancel = presentation.onDismiss
 
         let hostingView = NSHostingView(rootView: view)
         hostingView.wantsLayer = true
@@ -107,6 +108,7 @@ final class AlertWindowController: AlertPresenting {
         panel.isReleasedWhenClosed = false
         panel.isOpaque = false
         panel.backgroundColor = .clear
+        panel.makeKeyAndOrderFront(nil)
         panel.orderFrontRegardless()
 
         self.panel = panel
@@ -143,4 +145,29 @@ private struct AlertPresentation {
     let onJoin: (URL) -> Void
     let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
+}
+
+private final class AlertPanel: NSPanel {
+    var onCancel: (() -> Void)?
+
+    override var canBecomeKey: Bool {
+        true
+    }
+
+    override var canBecomeMain: Bool {
+        true
+    }
+
+    override func cancelOperation(_ sender: Any?) {
+        onCancel?()
+    }
+
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 53 {
+            onCancel?()
+            return
+        }
+
+        super.keyDown(with: event)
+    }
 }
