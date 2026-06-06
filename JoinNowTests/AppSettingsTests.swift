@@ -12,7 +12,7 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertTrue(settings.isEnabled)
         XCTAssertEqual(settings.leadTimeMinutes, 5)
         XCTAssertFalse(settings.onlyEventsWithMeetingLink)
-        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 30.0)
+        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 80.0)
     }
 
     @MainActor

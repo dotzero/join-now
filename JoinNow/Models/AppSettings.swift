@@ -14,7 +14,7 @@ final class AppSettings: ObservableObject {
     }
 
     static let allowedLeadTimes = [1, 3, 5, 10, 15]
-    static let defaultAlertBackgroundOpacityPercent = 30.0
+    static let defaultAlertBackgroundOpacityPercent = 80.0
     static let defaultAlertBackgroundColor = Color.black
     static let defaultAlertTextColor = Color.white
 
