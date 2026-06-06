@@ -17,12 +17,14 @@ It reads your Calendar events, finds online meeting links, and shows a fullscree
 
 ## Requirements
 
-- macOS
+- macOS 26.0 or newer
 - Xcode 26.5 or newer
 - Calendar access permission
 - Optional: SwiftFormat and SwiftLint for local style checks
 
 JoinNow has no third-party runtime dependencies.
+
+Release builds are universal binaries that include both Apple Silicon (`arm64`) and Intel (`x86_64`) slices.
 
 ## Build From Source
 
