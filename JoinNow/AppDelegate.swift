@@ -14,6 +14,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        guard !ProcessInfo.processInfo.isRunningXCTest else {
+            return
+        }
+
         NSApp.setActivationPolicy(.accessory)
 
         let alertController = AlertWindowController(settings: settings)
@@ -67,5 +71,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func showAlertPreview() {
         alertWindowController?.showAlertPreview()
+    }
+}
+
+private extension ProcessInfo {
+    var isRunningXCTest: Bool {
+        environment["XCTestConfigurationFilePath"] != nil
     }
 }
