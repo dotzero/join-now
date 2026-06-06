@@ -1,6 +1,5 @@
 PROJECT := JoinNow.xcodeproj
 SCHEME := JoinNow
-CONFIGURATION := Debug
 DERIVED_DATA_PATH := /private/tmp/joinnow-derived-data
 APP_NAME := JoinNow
 DIST_DIR := dist
@@ -13,7 +12,7 @@ ZIP_PATH := $(DIST_DIR)/$(PACKAGE_NAME).zip
 .PHONY: test lint swiftformat swiftlint check build release package clean-dist
 
 build:
-	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) -derivedDataPath $(DERIVED_DATA_PATH) build
+	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH) build
 
 release:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(RELEASE_DERIVED_DATA_PATH) -destination generic/platform=macOS build
@@ -29,7 +28,7 @@ clean-dist:
 	rm -rf "$(DIST_DIR)"
 
 test:
-	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) -derivedDataPath $(DERIVED_DATA_PATH)
+	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH)
 
 swiftformat:
 	swiftformat --lint . --cache ignore
