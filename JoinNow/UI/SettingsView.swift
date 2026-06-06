@@ -17,6 +17,19 @@ struct SettingsView: View {
                         .labelsHidden()
                 }
 
+                settingsRow("Launch automatically at startup") {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Toggle("", isOn: launchAtStartupBinding)
+                            .labelsHidden()
+
+                        if let errorMessage = settings.launchAtStartupErrorMessage {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+
                 settingsRow("Alert lead time") {
                     Picker("", selection: leadTimeBinding) {
                         ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
@@ -86,6 +99,13 @@ struct SettingsView: View {
         Binding(
             get: { settings.isEnabled },
             set: { settings.setEnabled($0) }
+        )
+    }
+
+    private var launchAtStartupBinding: Binding<Bool> {
+        Binding(
+            get: { settings.launchAtStartupEnabled },
+            set: { settings.setLaunchAtStartupEnabled($0) }
         )
     }
 

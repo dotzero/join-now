@@ -16,6 +16,47 @@ final class AppSettingsTests: XCTestCase {
     }
 
     @MainActor
+    func testReadsLaunchAtStartupStateFromService() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let service = MockLaunchAtLoginService(isEnabled: true)
+        let settings = AppSettings(defaults: defaults, launchAtLoginService: service)
+
+        XCTAssertTrue(settings.launchAtStartupEnabled)
+    }
+
+    @MainActor
+    func testUpdatesLaunchAtStartupService() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let service = MockLaunchAtLoginService(isEnabled: false)
+        let settings = AppSettings(defaults: defaults, launchAtLoginService: service)
+
+        settings.setLaunchAtStartupEnabled(true)
+
+        XCTAssertTrue(settings.launchAtStartupEnabled)
+        XCTAssertTrue(service.isEnabled)
+        XCTAssertNil(settings.launchAtStartupErrorMessage)
+    }
+
+    @MainActor
+    func testRestoresLaunchAtStartupStateWhenServiceUpdateFails() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let service = MockLaunchAtLoginService(isEnabled: false)
+        service.error = MockLaunchAtLoginService.Error.updateFailed
+        let settings = AppSettings(defaults: defaults, launchAtLoginService: service)
+
+        settings.setLaunchAtStartupEnabled(true)
+
+        XCTAssertFalse(settings.launchAtStartupEnabled)
+        XCTAssertNotNil(settings.launchAtStartupErrorMessage)
+    }
+
+    @MainActor
     func testPersistsEnabledFlagLeadTimeAndMeetingLinkFilter() {
         let (suiteName, defaults) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suiteName) }
@@ -79,5 +120,27 @@ final class AppSettingsTests: XCTestCase {
         let defaults = UserDefaults(suiteName: suiteName)!
         defaults.removePersistentDomain(forName: suiteName)
         return (suiteName, defaults)
+    }
+}
+
+@MainActor
+private final class MockLaunchAtLoginService: LaunchAtLoginManaging {
+    enum Error: Swift.Error {
+        case updateFailed
+    }
+
+    var isEnabled: Bool
+    var error: Error?
+
+    init(isEnabled: Bool) {
+        self.isEnabled = isEnabled
+    }
+
+    func setEnabled(_ enabled: Bool) throws {
+        if let error {
+            throw error
+        }
+
+        isEnabled = enabled
     }
 }

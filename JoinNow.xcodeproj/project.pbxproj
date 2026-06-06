@@ -13,6 +13,7 @@
 		010000000000000000000104 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000004 /* CalendarService.swift */; };
 		010000000000000000000105 /* MeetingLinkExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000005 /* MeetingLinkExtractor.swift */; };
 		010000000000000000000106 /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000006 /* ReminderScheduler.swift */; };
+		010000000000000000000112 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000015 /* LaunchAtLoginService.swift */; };
 		010000000000000000000107 /* AlertWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000007 /* AlertWindowController.swift */; };
 		010000000000000000000108 /* MeetingAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000008 /* MeetingAlertView.swift */; };
 		010000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000009 /* SettingsView.swift */; };
@@ -40,6 +41,7 @@
 		010000000000000000000004 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		010000000000000000000005 /* MeetingLinkExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingLinkExtractor.swift; sourceTree = "<group>"; };
 		010000000000000000000006 /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
+		010000000000000000000015 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		010000000000000000000007 /* AlertWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWindowController.swift; sourceTree = "<group>"; };
 		010000000000000000000008 /* MeetingAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingAlertView.swift; sourceTree = "<group>"; };
 		010000000000000000000009 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				010000000000000000000004 /* CalendarService.swift */,
 				010000000000000000000005 /* MeetingLinkExtractor.swift */,
 				010000000000000000000006 /* ReminderScheduler.swift */,
+				010000000000000000000015 /* LaunchAtLoginService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 				010000000000000000000104 /* CalendarService.swift in Sources */,
 				010000000000000000000105 /* MeetingLinkExtractor.swift in Sources */,
 				010000000000000000000106 /* ReminderScheduler.swift in Sources */,
+				010000000000000000000112 /* LaunchAtLoginService.swift in Sources */,
 				010000000000000000000107 /* AlertWindowController.swift in Sources */,
 				010000000000000000000108 /* MeetingAlertView.swift in Sources */,
 				010000000000000000000109 /* SettingsView.swift in Sources */,

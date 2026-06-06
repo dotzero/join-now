@@ -40,19 +40,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showSettings() {
+        settings.refreshLaunchAtStartupEnabled()
+
         if settingsWindow == nil {
             let view = SettingsView(
                 settings: settings,
                 onPreview: { [weak self] in self?.showAlertPreview() }
             )
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 600, height: 320),
+                contentRect: NSRect(x: 0, y: 0, width: 600, height: 360),
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
             )
             window.title = "JoinNow Settings"
-            window.minSize = NSSize(width: 600, height: 320)
+            window.minSize = NSSize(width: 600, height: 360)
             window.contentView = NSHostingView(rootView: view)
             window.center()
             window.isReleasedWhenClosed = false

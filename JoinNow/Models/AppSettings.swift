@@ -24,6 +24,10 @@ final class AppSettings: ObservableObject {
 
     @Published private(set) var onlyEventsWithMeetingLink: Bool
 
+    @Published private(set) var launchAtStartupEnabled: Bool
+
+    @Published private(set) var launchAtStartupErrorMessage: String?
+
     @Published private(set) var alertBackgroundOpacityPercent: Double
 
     @Published private(set) var alertBackgroundColor: Color
@@ -31,9 +35,14 @@ final class AppSettings: ObservableObject {
     @Published private(set) var alertTextColor: Color
 
     private let defaults: UserDefaults
+    private let launchAtLoginService: LaunchAtLoginManaging
 
-    init(defaults: UserDefaults = .standard) {
+    init(
+        defaults: UserDefaults = .standard,
+        launchAtLoginService: LaunchAtLoginManaging = LaunchAtLoginService()
+    ) {
         self.defaults = defaults
+        self.launchAtLoginService = launchAtLoginService
 
         if defaults.object(forKey: Key.isEnabled) == nil {
             defaults.set(true, forKey: Key.isEnabled)
@@ -43,6 +52,7 @@ final class AppSettings: ObservableObject {
         self.isEnabled = defaults.bool(forKey: Key.isEnabled)
         self.leadTimeMinutes = Self.allowedLeadTimes.contains(storedLeadTime) ? storedLeadTime : 5
         self.onlyEventsWithMeetingLink = defaults.bool(forKey: Key.onlyEventsWithMeetingLink)
+        self.launchAtStartupEnabled = launchAtLoginService.isEnabled
         if defaults.object(forKey: Key.alertBackgroundOpacityPercent) == nil {
             self.alertBackgroundOpacityPercent = Self.defaultAlertBackgroundOpacityPercent
         } else {
@@ -69,6 +79,25 @@ final class AppSettings: ObservableObject {
 
         isEnabled = value
         defaults.set(value, forKey: Key.isEnabled)
+    }
+
+    func setLaunchAtStartupEnabled(_ value: Bool) {
+        guard launchAtStartupEnabled != value else {
+            return
+        }
+
+        do {
+            try launchAtLoginService.setEnabled(value)
+            launchAtStartupEnabled = launchAtLoginService.isEnabled
+            launchAtStartupErrorMessage = nil
+        } catch {
+            launchAtStartupEnabled = launchAtLoginService.isEnabled
+            launchAtStartupErrorMessage = error.localizedDescription
+        }
+    }
+
+    func refreshLaunchAtStartupEnabled() {
+        launchAtStartupEnabled = launchAtLoginService.isEnabled
     }
 
     func setLeadTimeMinutes(_ value: Int) {
