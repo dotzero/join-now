@@ -14,10 +14,10 @@ struct MeetingLinkExtractor {
 
     func firstMeetingLink(in event: EKEvent) -> URL? {
         let fields = [
-            event.title,
-            event.notes,
+            event.url?.absoluteString,
             event.location,
-            event.url?.absoluteString
+            event.title,
+            event.notes
         ].compactMap(\.self)
 
         for field in fields {

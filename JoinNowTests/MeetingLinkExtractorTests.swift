@@ -1,3 +1,4 @@
+import EventKit
 @testable import JoinNow
 import XCTest
 
@@ -34,11 +35,22 @@ final class MeetingLinkExtractorTests: XCTestCase {
 
     func testExtractsYandexTelemost360Link() {
         let url = extractor.firstMeetingLink(
-            in: "Telemost: https://telemost.360.yandex.ru/j/1928309976"
+            in: "Telemost: https://telemost.360.yandex.ru/j/123456789"
         )
 
         XCTAssertEqual(url?.host, "telemost.360.yandex.ru")
-        XCTAssertEqual(url?.path, "/j/1928309976")
+        XCTAssertEqual(url?.path, "/j/123456789")
+    }
+
+    func testPrefersLocationLinkOverNotesLinkInEvent() {
+        let eventStore = EKEventStore()
+        let event = EKEvent(eventStore: eventStore)
+        event.location = "Room: https://telemost.360.yandex.ru/j/123456789"
+        event.notes = "Notes: https://meet.google.com/abc-defg-hij"
+
+        let url = extractor.firstMeetingLink(in: event)
+
+        XCTAssertEqual(url?.absoluteString, "https://telemost.360.yandex.ru/j/123456789")
     }
 
     func testPrefersFirstSupportedProviderOrder() {
