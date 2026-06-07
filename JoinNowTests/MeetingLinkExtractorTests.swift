@@ -32,6 +32,15 @@ final class MeetingLinkExtractorTests: XCTestCase {
         XCTAssertEqual(url?.path, "/qwerty")
     }
 
+    func testExtractsYandexTelemost360Link() {
+        let url = extractor.firstMeetingLink(
+            in: "Telemost: https://telemost.360.yandex.ru/j/1928309976"
+        )
+
+        XCTAssertEqual(url?.host, "telemost.360.yandex.ru")
+        XCTAssertEqual(url?.path, "/j/1928309976")
+    }
+
     func testPrefersFirstSupportedProviderOrder() {
         let url = extractor.firstMeetingLink(
             in: "meet https://meet.google.com/abc-defg-hij zoom https://example.zoom.us/j/123"

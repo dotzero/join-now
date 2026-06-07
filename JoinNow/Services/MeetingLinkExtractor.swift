@@ -8,6 +8,7 @@ struct MeetingLinkExtractor {
         #"https?://[^\s<>"']*teams\.microsoft\.com/[^\s<>"']*"#,
         #"https?://teams\.live\.com/[^\s<>"']*"#,
         #"https?://[^\s<>"']*\.ktalk\.ru/[^\s<>"']*"#,
+        #"https?://telemost\.360\.yandex\.ru/j/[^\s<>"']*"#,
         #"https?://aka\.ms/[^\s<>"']*"#
     ]
 
