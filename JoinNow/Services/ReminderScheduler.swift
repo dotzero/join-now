@@ -13,6 +13,7 @@ final class ReminderScheduler {
     private let settings: AppSettings
     private let calendarService: CalendarEventFetching
     private let linkExtractor: MeetingLinkExtractor
+    private let currentUserStatusProvider: @MainActor (EKEvent) -> EKParticipantStatus?
     private weak var alertPresenter: AlertPresenting?
     private var timer: Timer?
     private var shownAlertIDs = Set<String>()
@@ -22,12 +23,15 @@ final class ReminderScheduler {
         settings: AppSettings,
         calendarService: CalendarEventFetching,
         linkExtractor: MeetingLinkExtractor,
-        alertPresenter: AlertPresenting
+        alertPresenter: AlertPresenting,
+        currentUserStatusProvider: @escaping @MainActor (EKEvent) -> EKParticipantStatus? =
+            ReminderScheduler.currentUserParticipantStatus
     ) {
         self.settings = settings
         self.calendarService = calendarService
         self.linkExtractor = linkExtractor
         self.alertPresenter = alertPresenter
+        self.currentUserStatusProvider = currentUserStatusProvider
     }
 
     func start() {
@@ -60,7 +64,8 @@ final class ReminderScheduler {
         }
 
         let candidates = events.compactMap { event -> AlertCandidate? in
-            guard shouldConsider(event: event, now: now) else {
+            let currentUserStatus = currentUserStatusProvider(event)
+            guard shouldConsider(event: event, now: now, currentUserStatus: currentUserStatus) else {
                 return nil
             }
 
@@ -73,11 +78,12 @@ final class ReminderScheduler {
                 event: event,
                 meetingURL: meetingURL,
                 alertID: Self.alertID(for: event),
-                startTimestamp: Self.alertStartTimestamp(for: event)
+                startTimestamp: Self.alertStartTimestamp(for: event),
+                responsePriority: Self.responsePriority(for: currentUserStatus)
             )
         }
 
-        guard let candidate = candidates.sorted(by: Self.sortCandidates).first else {
+        guard let candidate = candidates.sorted(by: sortCandidates).first else {
             return
         }
 
@@ -89,7 +95,7 @@ final class ReminderScheduler {
         shownAlertStartTimestamps.insert(candidate.startTimestamp)
     }
 
-    private func shouldConsider(event: EKEvent, now: Date) -> Bool {
+    private func shouldConsider(event: EKEvent, now: Date, currentUserStatus: EKParticipantStatus?) -> Bool {
         guard !event.isAllDay,
               event.endDate > now,
               event.startDate >= now,
@@ -103,7 +109,7 @@ final class ReminderScheduler {
         guard !shownAlertIDs.contains(alertID),
               !shownAlertStartTimestamps.contains(startTimestamp),
               !settings.isDismissed(alertID: alertID, startDate: event.startDate),
-              !isDeclinedByCurrentUser(event)
+              currentUserStatus != .declined
         else {
             return false
         }
@@ -111,10 +117,10 @@ final class ReminderScheduler {
         return true
     }
 
-    private func isDeclinedByCurrentUser(_ event: EKEvent) -> Bool {
-        event.attendees?.contains { attendee in
-            attendee.isCurrentUser && attendee.participantStatus == .declined
-        } ?? false
+    private static func currentUserParticipantStatus(for event: EKEvent) -> EKParticipantStatus? {
+        event.attendees?.first { attendee in
+            attendee.isCurrentUser
+        }?.participantStatus
     }
 
     static func alertID(for event: EKEvent) -> String {
@@ -126,9 +132,24 @@ final class ReminderScheduler {
         Int(event.startDate.timeIntervalSince1970)
     }
 
-    private static func sortCandidates(_ lhs: AlertCandidate, _ rhs: AlertCandidate) -> Bool {
+    private static func responsePriority(for status: EKParticipantStatus?) -> Int {
+        switch status {
+        case .accepted:
+            0
+        case .tentative:
+            2
+        default:
+            1
+        }
+    }
+
+    private func sortCandidates(_ lhs: AlertCandidate, _ rhs: AlertCandidate) -> Bool {
         if lhs.event.startDate != rhs.event.startDate {
             return lhs.event.startDate < rhs.event.startDate
+        }
+
+        if lhs.responsePriority != rhs.responsePriority {
+            return lhs.responsePriority < rhs.responsePriority
         }
 
         if (lhs.meetingURL != nil) != (rhs.meetingURL != nil) {
@@ -156,4 +177,5 @@ private struct AlertCandidate {
     let meetingURL: URL?
     let alertID: String
     let startTimestamp: Int
+    let responsePriority: Int
 }
