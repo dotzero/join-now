@@ -24,7 +24,7 @@ xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug build
 In restricted environments, use an explicit DerivedData path:
 
 ```sh
-xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath /private/tmp/joinnow-derived-data build
+xcodebuild -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath build build
 ```
 
 The preferred wrappers are:
@@ -37,7 +37,7 @@ make check
 make package
 ```
 
-Use `make package` to create a GitHub-release-ready macOS artifact in `dist/`: a draggable `JoinNow.app` and a versioned zip archive built from the Release configuration.
+Use `make package` to create GitHub-release-ready macOS artifacts in `dist/`: a draggable `JoinNow.app`, a versioned zip archive, and a versioned DMG built from the Release configuration. The DMG step requires `create-dmg` to be installed locally.
 
 Run style checks manually after installing tools:
 
@@ -49,7 +49,7 @@ swiftlint --strict --no-cache --config .swiftlint.yml
 Run tests after Swift code changes, in addition to linting:
 
 ```sh
-xcodebuild test -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath /private/tmp/joinnow-derived-data
+xcodebuild test -project JoinNow.xcodeproj -scheme JoinNow -configuration Debug -derivedDataPath build
 ```
 
 Open `JoinNow.xcodeproj` in Xcode to run the app locally. macOS will request Calendar access on first launch.
