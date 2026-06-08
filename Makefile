@@ -10,13 +10,22 @@ PACKAGE_NAME := $(APP_NAME)-$(VERSION)
 ZIP_PATH := $(DIST_DIR)/$(PACKAGE_NAME).zip
 DMG_PATH := $(DIST_DIR)/$(PACKAGE_NAME).dmg
 
-.PHONY: test lint check build release package clean-dist clean-build
+.PHONY: build release test lint check package dist-check dist-release clean-build clean-dist clean
 
 build: clean-build
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH) build
 
 release: clean-build
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(DERIVED_DATA_PATH) -destination generic/platform=macOS build
+
+test:
+	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH)
+
+lint:
+	swiftformat --lint . --cache ignore
+	swiftlint --strict --no-cache --config .swiftlint.yml
+
+check: lint test
 
 package: clean-dist release
 	ditto "$(RELEASE_APP)" "$(DIST_DIR)/$(APP_NAME).app"
@@ -36,6 +45,12 @@ package: clean-dist release
 	@echo "Created $(ZIP_PATH)"
 	@echo "Created $(DMG_PATH)"
 
+dist-check:
+	goreleaser release --snapshot --clean
+
+dist-release:
+	goreleaser release --clean
+
 clean-build:
 	rm -rf "$(DERIVED_DATA_PATH)"
 	mkdir -p "$(DERIVED_DATA_PATH)"
@@ -44,11 +59,4 @@ clean-dist:
 	rm -rf "$(DIST_DIR)"
 	mkdir -p "$(DIST_DIR)"
 
-test:
-	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH)
-
-lint:
-	swiftformat --lint . --cache ignore
-	swiftlint --strict --no-cache --config .swiftlint.yml
-
-check: lint test
+clean: clean-build clean-dist

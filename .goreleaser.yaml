@@ -1,0 +1,30 @@
+version: 2
+
+project_name: join-now
+dist: .goreleaser-dist
+
+before:
+  hooks:
+    - make package
+
+builds:
+  - id: join-now
+    skip: true
+archives: []
+
+source:
+  enabled: false
+
+checksum:
+  disable: true
+
+changelog:
+  use: github-native
+
+release:
+  github:
+    owner: dotzero
+    name: join-now
+  extra_files:
+    - glob: dist/JoinNow-*.zip
+    - glob: dist/JoinNow-*.dmg

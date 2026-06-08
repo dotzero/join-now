@@ -14,6 +14,7 @@ xcuserdata/
 build/
 DerivedData/
 dist/
+.goreleaser-dist/
 com.apple.DeveloperTools/
 *.ipa
 *.dSYM.zip
