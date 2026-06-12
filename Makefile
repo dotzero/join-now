@@ -33,7 +33,7 @@ test: ## Run tests
 	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH)
 
 lint: ## Run linting
-	swiftformat --lint . --cache ignore
+	swiftformat JoinNow JoinNowTests --lint --cache ignore
 	swiftlint --strict --no-cache --config .swiftlint.yml
 
 check: lint test ## Run linting and tests
