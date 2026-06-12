@@ -73,9 +73,16 @@ struct SettingsView: View {
 
             Divider()
 
-            Button("Preview", action: onPreview)
-                .keyboardShortcut("p")
-                .frame(maxWidth: .infinity, alignment: .trailing)
+            HStack {
+                Text(appVersionLabel)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Button("Preview", action: onPreview)
+                    .keyboardShortcut("p")
+            }
         }
         .padding(24)
         .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth)
@@ -142,5 +149,16 @@ struct SettingsView: View {
             get: { settings.alertTextColor },
             set: { settings.setAlertTextColor($0) }
         )
+    }
+
+    private var appVersionLabel: String {
+        let shortVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+
+        switch shortVersion {
+        case let shortVersion?:
+            return "Version \(shortVersion)"
+        default:
+            return "Version n/a"
+        }
     }
 }
