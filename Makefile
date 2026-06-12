@@ -58,11 +58,13 @@ package: clean-dist release ## Package the app into ZIP and DMG formats
 	@echo "Created $(ZIP_PATH)"
 	@echo "Created $(DMG_PATH)"
 
-dist-check:
+dist-check: ## Check the dist artifacts without creating a GitHub release
 	goreleaser release --snapshot --clean
 
-dist-release:
+dist-release: ## Create a release on GitHub and upload the ZIP and DMG assets
 	goreleaser release --clean
+
+---------------: ## ---------------
 
 clean-build:
 	rm -rf "$(DERIVED_DATA_PATH)"
