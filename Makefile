@@ -10,24 +10,37 @@ PACKAGE_NAME := $(APP_NAME)-$(VERSION)
 ZIP_PATH := $(DIST_DIR)/$(PACKAGE_NAME).zip
 DMG_PATH := $(DIST_DIR)/$(PACKAGE_NAME).dmg
 
-.PHONY: build release test lint check package dist-check dist-release clean-build clean-dist clean
+.PHONY: help build release test lint check package dist-check dist-release clean-build clean-dist clean
 
-build: clean-build
+.DEFAULT_GOAL := help
+
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_\-\.]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+all: release package ## Run release, package
+
+---------------: ## ---------------
+
+build: clean-build ## Build the app in Debug configuration
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH) build
 
-release: clean-build
+release: clean-build ## Build the app in Release configuration
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(DERIVED_DATA_PATH) -destination generic/platform=macOS build
 
-test:
+---------------: ## ---------------
+
+test: ## Run tests
 	xcodebuild test -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH)
 
-lint:
+lint: ## Run linting
 	swiftformat --lint . --cache ignore
 	swiftlint --strict --no-cache --config .swiftlint.yml
 
-check: lint test
+check: lint test ## Run linting and tests
 
-package: clean-dist release
+---------------: ## ---------------
+
+package: clean-dist release ## Package the app into ZIP and DMG formats
 	ditto "$(RELEASE_APP)" "$(DIST_DIR)/$(APP_NAME).app"
 	cd "$(DIST_DIR)" && ditto -c -k --keepParent --sequesterRsrc --zlibCompressionLevel 9 "$(APP_NAME).app" "$(PACKAGE_NAME).zip"
 	mkdir -p "$(DMG_STAGING_DIR)"
@@ -35,7 +48,7 @@ package: clean-dist release
 	create-dmg \
 		--volname "$(APP_NAME)" \
 		--window-pos 200 120 \
-		--window-size 480 540 \
+		--window-size 480 560 \
 		--icon "$(APP_NAME).app" 240 130 \
 		--hide-extension "$(APP_NAME).app" \
 		--app-drop-link 240 380 \
@@ -59,4 +72,4 @@ clean-dist:
 	rm -rf "$(DIST_DIR)"
 	mkdir -p "$(DIST_DIR)"
 
-clean: clean-build clean-dist
+clean: clean-build clean-dist ## Clean build and dist directories
