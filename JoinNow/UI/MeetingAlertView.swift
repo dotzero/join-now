@@ -24,10 +24,12 @@ struct MeetingAlertView: View {
 
             VStack(spacing: 34) {
                 VStack(spacing: 18) {
-                    Text("Meeting Starting Soon")
-                        .font(.system(size: 22, weight: .semibold))
-                        .textCase(.uppercase)
-                        .foregroundStyle(textColor.opacity(0.72))
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        Text("Meeting Starting \(startOffsetLabel(now: context.date))")
+                            .font(.system(size: 22, weight: .semibold))
+                            .textCase(.uppercase)
+                            .foregroundStyle(textColor.opacity(0.72))
+                    }
 
                     Text(title)
                         .font(.system(size: 76, weight: .bold, design: .rounded))
@@ -93,6 +95,17 @@ struct MeetingAlertView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(48)
         }
+    }
+
+    private func startOffsetLabel(now: Date) -> String {
+        let secondsUntilStart = startDate.timeIntervalSince(now)
+
+        guard secondsUntilStart > 0 else {
+            return "now"
+        }
+
+        let minutesUntilStart = max(1, Int(ceil(secondsUntilStart / 60)))
+        return "in \(minutesUntilStart) min"
     }
 }
 
