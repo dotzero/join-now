@@ -56,8 +56,16 @@ final class StatusBarController {
         enabledItem.target = self
         menu.addItem(enabledItem)
 
+        menu.addItem(NSMenuItem.separator())
+        addLeadTimeItems(to: menu)
+
+        menu.addItem(NSMenuItem.separator())
+        addAlertSoundItems(to: menu)
+
+        menu.addItem(NSMenuItem.separator())
+
         let settingsItem = NSMenuItem(
-            title: "Settings...",
+            title: "Settings",
             action: #selector(openSettings),
             keyEquivalent: ","
         )
@@ -77,8 +85,66 @@ final class StatusBarController {
         statusItem.menu = menu
     }
 
+    private func addLeadTimeItems(to menu: NSMenu) {
+        menu.addItem(disabledHeaderItem(title: "Alert lead time"))
+
+        for minutes in AppSettings.allowedLeadTimes {
+            let item = NSMenuItem(
+                title: "\(minutes) min",
+                action: #selector(setLeadTime),
+                keyEquivalent: ""
+            )
+            item.target = self
+            item.representedObject = minutes
+            item.state = settings.leadTimeMinutes == minutes ? .on : .off
+            menu.addItem(item)
+        }
+    }
+
+    private func addAlertSoundItems(to menu: NSMenu) {
+        menu.addItem(disabledHeaderItem(title: "Alert sound"))
+
+        for sound in AlertSound.allCases {
+            let item = NSMenuItem(
+                title: sound.displayName,
+                action: #selector(setAlertSound),
+                keyEquivalent: ""
+            )
+            item.target = self
+            item.representedObject = sound.rawValue
+            item.state = settings.alertSound == sound ? .on : .off
+            menu.addItem(item)
+        }
+    }
+
+    private func disabledHeaderItem(title: String) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        item.isEnabled = false
+        return item
+    }
+
     @objc private func toggleEnabled() {
         settings.setEnabled(!settings.isEnabled)
+        rebuildMenu()
+    }
+
+    @objc private func setLeadTime(_ sender: NSMenuItem) {
+        guard let minutes = sender.representedObject as? Int else {
+            return
+        }
+
+        settings.setLeadTimeMinutes(minutes)
+        rebuildMenu()
+    }
+
+    @objc private func setAlertSound(_ sender: NSMenuItem) {
+        guard let rawValue = sender.representedObject as? String,
+              let sound = AlertSound(rawValue: rawValue)
+        else {
+            return
+        }
+
+        settings.setAlertSound(sound)
         rebuildMenu()
     }
 
