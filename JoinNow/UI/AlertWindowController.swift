@@ -52,7 +52,7 @@ final class AlertWindowController: AlertPresenting {
         showAlert(
             presentation: AlertPresentation(
                 title: "Design Review with Product Team",
-                startDate: Date().addingTimeInterval(180),
+                startDate: Date().addingTimeInterval(60),
                 calendarTitle: "Test Calendar",
                 calendarColor: .red,
                 meetingURL: URL(string: "https://meet.google.com/abc-defg-hij"),

@@ -25,7 +25,7 @@ struct MeetingAlertView: View {
             VStack(spacing: 34) {
                 VStack(spacing: 18) {
                     TimelineView(.periodic(from: .now, by: 1)) { context in
-                        Text("Meeting Starting \(startOffsetLabel(now: context.date))")
+                        Text(AlertCountdownText.title(startDate: startDate, now: context.date))
                             .font(.system(size: 22, weight: .semibold))
                             .textCase(.uppercase)
                             .foregroundStyle(textColor.opacity(0.72))
@@ -96,16 +96,31 @@ struct MeetingAlertView: View {
             .padding(48)
         }
     }
+}
 
-    private func startOffsetLabel(now: Date) -> String {
-        let secondsUntilStart = startDate.timeIntervalSince(now)
+enum AlertCountdownText {
+    static func title(startDate: Date, now: Date) -> String {
+        let secondsUntilStart = Int(startDate.timeIntervalSince(now).rounded())
 
-        guard secondsUntilStart > 0 else {
-            return "now"
+        if secondsUntilStart > 0 {
+            return "Meeting starts \(remainingTimeLabel(seconds: secondsUntilStart))"
         }
 
-        let minutesUntilStart = max(1, Int(ceil(secondsUntilStart / 60)))
-        return "in \(minutesUntilStart) min"
+        if secondsUntilStart > -60 {
+            return "Meeting starting now"
+        }
+
+        let minutesSinceStart = max(1, -secondsUntilStart / 60)
+        return "Meeting started \(minutesSinceStart) min ago"
+    }
+
+    private static func remainingTimeLabel(seconds: Int) -> String {
+        guard seconds >= 60 else {
+            return "in \(seconds) sec"
+        }
+
+        let minutes = max(1, Int(ceil(Double(seconds) / 60)))
+        return "in \(minutes) min"
     }
 }
 
