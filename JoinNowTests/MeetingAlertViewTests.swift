@@ -8,7 +8,7 @@ final class MeetingAlertViewTests: XCTestCase {
 
         XCTAssertEqual(
             AlertCountdownText.title(startDate: startDate, now: now),
-            "Meeting starts in 3min"
+            "Meeting starts in 3 min"
         )
     }
 
@@ -18,7 +18,7 @@ final class MeetingAlertViewTests: XCTestCase {
 
         XCTAssertEqual(
             AlertCountdownText.title(startDate: startDate, now: now),
-            "Meeting starts in 42sec"
+            "Meeting starts in 42 sec"
         )
     }
 
@@ -38,7 +38,7 @@ final class MeetingAlertViewTests: XCTestCase {
 
         XCTAssertEqual(
             AlertCountdownText.title(startDate: startDate, now: now),
-            "Meeting started 2min ago"
+            "Meeting started 2 min ago"
         )
     }
 }
