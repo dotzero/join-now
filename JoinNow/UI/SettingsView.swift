@@ -45,6 +45,16 @@ struct SettingsView: View {
                         .labelsHidden()
                 }
 
+                settingsRow("Alert sound") {
+                    Picker("", selection: alertSoundBinding) {
+                        ForEach(AlertSound.allCases) { sound in
+                            Text(sound.displayName).tag(sound)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.segmented)
+                }
+
                 settingsRow("Background opacity") {
                     HStack(spacing: 12) {
                         Slider(
@@ -127,6 +137,13 @@ struct SettingsView: View {
         Binding(
             get: { settings.onlyEventsWithMeetingLink },
             set: { settings.setOnlyEventsWithMeetingLink($0) }
+        )
+    }
+
+    private var alertSoundBinding: Binding<AlertSound> {
+        Binding(
+            get: { settings.alertSound },
+            set: { settings.setAlertSound($0) }
         )
     }
 

@@ -7,14 +7,16 @@ final class AlertWindowController: AlertPresenting {
     private static let talkBundleIdentifier = "kontur.talk"
 
     private let settings: AppSettings
+    private let soundPlayer: AlertSoundPlaying
     private var panel: NSPanel?
 
     var isShowingAlert: Bool {
         panel?.isVisible == true
     }
 
-    init(settings: AppSettings) {
+    init(settings: AppSettings, soundPlayer: AlertSoundPlaying = SystemAlertSoundPlayer()) {
         self.settings = settings
+        self.soundPlayer = soundPlayer
     }
 
     @discardableResult
@@ -116,6 +118,7 @@ final class AlertWindowController: AlertPresenting {
         panel.orderFrontRegardless()
 
         self.panel = panel
+        soundPlayer.play(settings.alertSound)
         return true
     }
 
@@ -141,6 +144,24 @@ final class AlertWindowController: AlertPresenting {
     }
 }
 
+@MainActor
+protocol AlertSoundPlaying: AnyObject {
+    func play(_ sound: AlertSound)
+}
+
+@MainActor
+private final class SystemAlertSoundPlayer: AlertSoundPlaying {
+    func play(_ sound: AlertSound) {
+        guard let systemSoundName = sound.systemSoundName,
+              let sound = NSSound(named: systemSoundName)
+        else {
+            return
+        }
+
+        sound.play()
+    }
+}
+
 private struct AlertPresentation {
     let title: String
     let startDate: Date
@@ -151,6 +172,19 @@ private struct AlertPresentation {
     let onJoin: (URL) -> Void
     let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
+}
+
+private extension AlertSound {
+    var systemSoundName: NSSound.Name? {
+        switch self {
+        case .none:
+            nil
+        case .hero:
+            NSSound.Name("Hero")
+        case .glass:
+            NSSound.Name("Glass")
+        }
+    }
 }
 
 private final class AlertPanel: NSPanel {

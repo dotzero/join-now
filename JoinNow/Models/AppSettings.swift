@@ -6,6 +6,7 @@ final class AppSettings: ObservableObject {
         static let isEnabled = "isEnabled"
         static let leadTimeMinutes = "leadTimeMinutes"
         static let onlyEventsWithMeetingLink = "onlyEventsWithMeetingLink"
+        static let alertSound = "alertSound"
         static let alertBackgroundOpacityPercent = "alertBackgroundOpacityPercent"
         static let alertBackgroundColor = "alertBackgroundColor"
         static let alertTextColor = "alertTextColor"
@@ -17,6 +18,7 @@ final class AppSettings: ObservableObject {
     static let defaultAlertBackgroundOpacityPercent = 80.0
     static let defaultAlertBackgroundColor = Color.black
     static let defaultAlertTextColor = Color.white
+    static let defaultAlertSound = AlertSound.hero
 
     @Published private(set) var isEnabled: Bool
 
@@ -27,6 +29,8 @@ final class AppSettings: ObservableObject {
     @Published private(set) var launchAtStartupEnabled: Bool
 
     @Published private(set) var launchAtStartupErrorMessage: String?
+
+    @Published private(set) var alertSound: AlertSound
 
     @Published private(set) var alertBackgroundOpacityPercent: Double
 
@@ -53,6 +57,7 @@ final class AppSettings: ObservableObject {
         self.leadTimeMinutes = Self.allowedLeadTimes.contains(storedLeadTime) ? storedLeadTime : 5
         self.onlyEventsWithMeetingLink = defaults.bool(forKey: Key.onlyEventsWithMeetingLink)
         self.launchAtStartupEnabled = launchAtLoginService.isEnabled
+        self.alertSound = Self.alertSound(for: defaults.string(forKey: Key.alertSound))
         if defaults.object(forKey: Key.alertBackgroundOpacityPercent) == nil {
             self.alertBackgroundOpacityPercent = Self.defaultAlertBackgroundOpacityPercent
         } else {
@@ -119,6 +124,15 @@ final class AppSettings: ObservableObject {
         defaults.set(value, forKey: Key.onlyEventsWithMeetingLink)
     }
 
+    func setAlertSound(_ value: AlertSound) {
+        guard alertSound != value else {
+            return
+        }
+
+        alertSound = value
+        defaults.set(value.rawValue, forKey: Key.alertSound)
+    }
+
     func setAlertBackgroundOpacityPercent(_ value: Double) {
         let normalizedValue = Self.normalizedAlertBackgroundOpacityPercent(value)
         guard alertBackgroundOpacityPercent != normalizedValue else {
@@ -178,6 +192,16 @@ final class AppSettings: ObservableObject {
         min(max(value, 0), 100)
     }
 
+    private static func alertSound(for rawValue: String?) -> AlertSound {
+        guard let rawValue,
+              let alertSound = AlertSound(rawValue: rawValue)
+        else {
+            return defaultAlertSound
+        }
+
+        return alertSound
+    }
+
     private static func color(forKey key: String, defaultValue: Color, defaults: UserDefaults) -> Color {
         guard let components = defaults.array(forKey: key) as? [Double],
               components.count == 4
@@ -202,5 +226,26 @@ final class AppSettings: ObservableObject {
             [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent],
             forKey: key
         )
+    }
+}
+
+enum AlertSound: String, CaseIterable, Identifiable {
+    case none
+    case hero
+    case glass
+
+    var id: String {
+        rawValue
+    }
+
+    var displayName: String {
+        switch self {
+        case .none:
+            "Off"
+        case .hero:
+            "Hero"
+        case .glass:
+            "Glass"
+        }
     }
 }

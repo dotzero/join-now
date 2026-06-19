@@ -12,6 +12,7 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertTrue(settings.isEnabled)
         XCTAssertEqual(settings.leadTimeMinutes, 5)
         XCTAssertFalse(settings.onlyEventsWithMeetingLink)
+        XCTAssertEqual(settings.alertSound, .hero)
         XCTAssertEqual(settings.alertBackgroundOpacityPercent, 80.0)
     }
 
@@ -98,6 +99,31 @@ final class AppSettingsTests: XCTestCase {
 
         settings.setAlertBackgroundOpacityPercent(150)
         XCTAssertEqual(settings.alertBackgroundOpacityPercent, 100)
+    }
+
+    @MainActor
+    func testPersistsAlertSound() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let settings = AppSettings(defaults: defaults)
+
+        settings.setAlertSound(.glass)
+        XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .glass)
+
+        settings.setAlertSound(.none)
+        XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .none)
+    }
+
+    @MainActor
+    func testNormalizesUnsupportedAlertSoundToDefault() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set("chime", forKey: "alertSound")
+
+        let settings = AppSettings(defaults: defaults)
+
+        XCTAssertEqual(settings.alertSound, .hero)
     }
 
     @MainActor
