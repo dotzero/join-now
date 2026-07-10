@@ -5,7 +5,9 @@ DERIVED_DATA_PATH := build
 DIST_DIR := dist
 DMG_STAGING_DIR := $(DIST_DIR)/dmg
 RELEASE_APP := $(DERIVED_DATA_PATH)/Build/Products/Release/$(APP_NAME).app
-VERSION := $(shell plutil -extract CFBundleShortVersionString raw -o - JoinNow/Info.plist)
+CURRENT_PROJECT_VERSION ?= 1
+MARKETING_VERSION ?= 0.0.0
+VERSION := $(MARKETING_VERSION)
 PACKAGE_NAME := $(APP_NAME)-$(VERSION)
 ZIP_PATH := $(DIST_DIR)/$(PACKAGE_NAME).zip
 DMG_PATH := $(DIST_DIR)/$(PACKAGE_NAME).dmg
@@ -25,7 +27,7 @@ build: clean-build ## Build the app in Debug configuration
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Debug -derivedDataPath $(DERIVED_DATA_PATH) build
 
 release: clean-build ## Build the app in Release configuration
-	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(DERIVED_DATA_PATH) -destination generic/platform=macOS build
+	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration Release -derivedDataPath $(DERIVED_DATA_PATH) -destination generic/platform=macOS build MARKETING_VERSION="$(MARKETING_VERSION)" CURRENT_PROJECT_VERSION="$(CURRENT_PROJECT_VERSION)"
 
 ---------------: ## ---------------
 
