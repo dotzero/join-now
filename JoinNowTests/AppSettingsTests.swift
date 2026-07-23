@@ -134,11 +134,44 @@ final class AppSettingsTests: XCTestCase {
         let settings = AppSettings(defaults: defaults)
         let startDate = Date(timeIntervalSince1970: 1_800_000_000)
 
-        settings.dismiss(alertID: "event-1", startDate: startDate)
+        let alertID = "event-1800000000"
+        settings.dismiss(alertID: alertID, startDate: startDate)
 
         let restoredSettings = AppSettings(defaults: defaults)
-        XCTAssertTrue(restoredSettings.isDismissed(alertID: "event-1"))
+        XCTAssertTrue(restoredSettings.isDismissed(alertID: alertID))
         XCTAssertTrue(restoredSettings.isDismissed(alertID: "different-id", startDate: startDate))
+    }
+
+    @MainActor
+    func testPrunesDismissedAlertsOlderThanOneDay() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let settings = AppSettings(defaults: defaults)
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let oldStartDate = now.addingTimeInterval(-24 * 60 * 60 - 1)
+        let recentStartDate = now.addingTimeInterval(-24 * 60 * 60 + 1)
+
+        settings.dismiss(alertID: "old-event-1799913599", startDate: oldStartDate)
+        settings.dismiss(alertID: "recent-event-1799913601", startDate: recentStartDate)
+        settings.pruneDismissedAlerts(now: now)
+
+        XCTAssertFalse(settings.isDismissed(alertID: "old-event-1799913599"))
+        XCTAssertFalse(settings.isDismissed(alertID: "different-id", startDate: oldStartDate))
+        XCTAssertTrue(settings.isDismissed(alertID: "recent-event-1799913601"))
+        XCTAssertTrue(settings.isDismissed(alertID: "different-id", startDate: recentStartDate))
+    }
+
+    @MainActor
+    func testPruningRemovesDismissedAlertsWithMalformedIDs() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set(["invalid-alert-id"], forKey: "dismissedAlertIDs")
+
+        let settings = AppSettings(defaults: defaults)
+        settings.pruneDismissedAlerts(now: Date(timeIntervalSince1970: 1_800_000_000))
+
+        XCTAssertFalse(settings.isDismissed(alertID: "invalid-alert-id"))
     }
 
     @MainActor

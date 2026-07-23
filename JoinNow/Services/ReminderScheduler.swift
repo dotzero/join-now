@@ -50,6 +50,8 @@ final class ReminderScheduler {
     }
 
     func checkUpcomingEvents() async {
+        settings.pruneDismissedAlerts()
+
         guard settings.isEnabled, alertPresenter?.isShowingAlert != true else {
             return
         }

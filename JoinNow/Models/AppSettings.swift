@@ -20,6 +20,8 @@ final class AppSettings: ObservableObject {
     static let defaultAlertBackgroundColor = Color.black
     static let defaultAlertTextColor = Color.white
     static let defaultAlertSound = AlertSound.hero
+    static let dismissedAlertRetentionInterval: TimeInterval = 24 * 60 * 60
+    static let dismissedAlertPruneInterval: TimeInterval = 5 * 60
 
     @Published private(set) var isEnabled: Bool
 
@@ -43,6 +45,7 @@ final class AppSettings: ObservableObject {
 
     private let defaults: UserDefaults
     private let launchAtLoginService: LaunchAtLoginManaging
+    private var lastDismissedAlertPruneDate: Date?
 
     init(
         defaults: UserDefaults = .standard,
@@ -81,6 +84,7 @@ final class AppSettings: ObservableObject {
         self.disabledCalendarIdentifiers = Set(
             defaults.stringArray(forKey: Key.disabledCalendarIdentifiers) ?? []
         )
+        pruneDismissedAlerts()
     }
 
     func setEnabled(_ value: Bool) {
@@ -223,6 +227,28 @@ final class AppSettings: ObservableObject {
         defaults.set(Array(timestamps), forKey: Key.dismissedAlertStartTimestamps)
     }
 
+    func pruneDismissedAlerts(now: Date = Date()) {
+        guard lastDismissedAlertPruneDate.map({
+            now.timeIntervalSince($0) >= Self.dismissedAlertPruneInterval
+        }) ?? true else {
+            return
+        }
+
+        let retentionCutoff = Int(now.addingTimeInterval(-Self.dismissedAlertRetentionInterval).timeIntervalSince1970)
+        let retainedTimestamps = dismissedAlertStartTimestamps.filter { $0 >= retentionCutoff }
+        let retainedIDs = dismissedAlertIDs.filter { alertID in
+            guard let timestamp = Self.alertStartTimestamp(from: alertID) else {
+                return false
+            }
+
+            return timestamp >= retentionCutoff
+        }
+
+        defaults.set(Array(retainedTimestamps), forKey: Key.dismissedAlertStartTimestamps)
+        defaults.set(Array(retainedIDs), forKey: Key.dismissedAlertIDs)
+        lastDismissedAlertPruneDate = now
+    }
+
     private var dismissedAlertIDs: Set<String> {
         Set(defaults.stringArray(forKey: Key.dismissedAlertIDs) ?? [])
     }
@@ -233,6 +259,14 @@ final class AppSettings: ObservableObject {
 
     private static func alertStartTimestamp(for startDate: Date) -> Int {
         Int(startDate.timeIntervalSince1970)
+    }
+
+    private static func alertStartTimestamp(from alertID: String) -> Int? {
+        guard let separatorIndex = alertID.lastIndex(of: "-") else {
+            return nil
+        }
+
+        return Int(alertID[alertID.index(after: separatorIndex)...])
     }
 
     private static func normalizedAlertBackgroundOpacityPercent(_ value: Double) -> Double {
