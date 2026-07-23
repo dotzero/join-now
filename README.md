@@ -8,7 +8,7 @@ It reads your Calendar events, finds online meeting links, and shows a full-scre
 
 ## Features
 
-- 📅 Reads upcoming events from Calendar
+- 📅 Reads upcoming events from selected Calendars
 - 🔔 Shows full-screen meeting reminders
 - 🚀 Lets you join the meeting directly from the alert
 
@@ -42,7 +42,7 @@ Clone the repository and build the release package:
 ```sh
 git clone https://github.com/dotzero/join-now.git
 cd join-now
-make package
+make release
 ```
 
 ## Calendar Permissions
