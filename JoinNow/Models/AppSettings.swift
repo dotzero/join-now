@@ -12,6 +12,7 @@ final class AppSettings: ObservableObject {
         static let alertTextColor = "alertTextColor"
         static let dismissedAlertIDs = "dismissedAlertIDs"
         static let dismissedAlertStartTimestamps = "dismissedAlertStartTimestamps"
+        static let disabledCalendarIdentifiers = "disabledCalendarIdentifiers"
     }
 
     static let allowedLeadTimes = [1, 3, 5, 10, 15]
@@ -37,6 +38,8 @@ final class AppSettings: ObservableObject {
     @Published private(set) var alertBackgroundColor: Color
 
     @Published private(set) var alertTextColor: Color
+
+    @Published private(set) var disabledCalendarIdentifiers: Set<String>
 
     private let defaults: UserDefaults
     private let launchAtLoginService: LaunchAtLoginManaging
@@ -74,6 +77,9 @@ final class AppSettings: ObservableObject {
             forKey: Key.alertTextColor,
             defaultValue: Self.defaultAlertTextColor,
             defaults: defaults
+        )
+        self.disabledCalendarIdentifiers = Set(
+            defaults.stringArray(forKey: Key.disabledCalendarIdentifiers) ?? []
         )
     }
 
@@ -122,6 +128,24 @@ final class AppSettings: ObservableObject {
 
         onlyEventsWithMeetingLink = value
         defaults.set(value, forKey: Key.onlyEventsWithMeetingLink)
+    }
+
+    func isCalendarEnabled(calendarIdentifier: String) -> Bool {
+        !disabledCalendarIdentifiers.contains(calendarIdentifier)
+    }
+
+    func setCalendarEnabled(_ enabled: Bool, calendarIdentifier: String) {
+        guard isCalendarEnabled(calendarIdentifier: calendarIdentifier) != enabled else {
+            return
+        }
+
+        if enabled {
+            disabledCalendarIdentifiers.remove(calendarIdentifier)
+        } else {
+            disabledCalendarIdentifiers.insert(calendarIdentifier)
+        }
+
+        defaults.set(Array(disabledCalendarIdentifiers), forKey: Key.disabledCalendarIdentifiers)
     }
 
     func setAlertSound(_ value: AlertSound) {

@@ -8,6 +8,7 @@ struct JoinNowApp: App {
         Settings {
             SettingsView(
                 settings: appDelegate.settings,
+                calendarService: appDelegate.calendarService,
                 onPreview: { appDelegate.showAlertPreview() }
             )
         }

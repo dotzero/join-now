@@ -81,6 +81,26 @@ final class ReminderSchedulerTests: XCTestCase {
         XCTAssertEqual(presenter.presentedEvents.first?.title, "3 Accepted planning")
     }
 
+    func testDoesNotPresentAlertForDisabledCalendar() async {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let event = makeEvent(startOffset: 60)
+        let settings = AppSettings(defaults: defaults)
+        settings.setCalendarEnabled(false, calendarIdentifier: event.calendar.calendarIdentifier)
+        let presenter = SpyAlertPresenter()
+        let scheduler = ReminderScheduler(
+            settings: settings,
+            calendarService: FakeCalendarService(events: [event]),
+            linkExtractor: MeetingLinkExtractor(),
+            alertPresenter: presenter
+        )
+
+        await scheduler.checkUpcomingEvents()
+
+        XCTAssertEqual(presenter.showAlertCallCount, 0)
+    }
+
     private func makeDefaults() -> (suiteName: String, defaults: UserDefaults) {
         let suiteName = "JoinNowTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!
@@ -120,6 +140,10 @@ private final class FakeCalendarService: CalendarEventFetching {
     func events(from startDate: Date, to endDate: Date) async -> [EKEvent] {
         onFetch?()
         return storedEvents
+    }
+
+    func calendars() async -> [CalendarInfo] {
+        []
     }
 }
 

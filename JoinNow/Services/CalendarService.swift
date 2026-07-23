@@ -4,6 +4,12 @@ import Foundation
 @MainActor
 protocol CalendarEventFetching: AnyObject {
     func events(from startDate: Date, to endDate: Date) async -> [EKEvent]
+    func calendars() async -> [CalendarInfo]
+}
+
+struct CalendarInfo: Identifiable, Equatable {
+    let id: String
+    let title: String
 }
 
 @MainActor
@@ -38,5 +44,15 @@ final class CalendarService: CalendarEventFetching {
 
         let predicate = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
         return eventStore.events(matching: predicate)
+    }
+
+    func calendars() async -> [CalendarInfo] {
+        guard await requestAccessIfNeeded() else {
+            return []
+        }
+
+        return eventStore.calendars(for: .event)
+            .map { CalendarInfo(id: $0.calendarIdentifier, title: $0.title) }
+            .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
 }

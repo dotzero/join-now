@@ -4,12 +4,34 @@ struct SettingsView: View {
     private enum Layout {
         static let contentWidth: CGFloat = 600
         static let labelWidth: CGFloat = 220
+        static let calendarListWidth: CGFloat = 360
+        static let calendarListHeight: CGFloat = 240
     }
 
     @ObservedObject var settings: AppSettings
+    let calendarService: CalendarEventFetching
     let onPreview: () -> Void
+    @State private var calendars = [CalendarInfo]()
+    @State private var hasLoadedCalendars = false
 
     var body: some View {
+        TabView {
+            generalSettings
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .tabItem { Text("General") }
+
+            calendarsSettings
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .tabItem { Text("Calendars") }
+        }
+        .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth, minHeight: 400)
+        .task {
+            calendars = await calendarService.calendars()
+            hasLoadedCalendars = true
+        }
+    }
+
+    private var generalSettings: some View {
         VStack(alignment: .leading, spacing: 22) {
             Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
                 settingsRow("Enabled") {
@@ -94,8 +116,41 @@ struct SettingsView: View {
                     .keyboardShortcut("p")
             }
         }
-        .padding(24)
-        .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
+        .padding(.top, 24)
+    }
+
+    private var calendarsSettings: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Choose the calendars JoinNow should use for reminders.\nEvents from unchecked calendars are ignored.")
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Group {
+                if !hasLoadedCalendars {
+                    ProgressView()
+                } else if calendars.isEmpty {
+                    Text("No calendars are available.")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(calendars) { calendar in
+                                Toggle(calendar.title, isOn: calendarEnabledBinding(for: calendar.id))
+                                    .toggleStyle(.checkbox)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxHeight: Layout.calendarListHeight)
+                }
+            }
+            .frame(width: Layout.calendarListWidth, alignment: .leading)
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
+        .padding(.top, 24)
     }
 
     private func settingsRow(
@@ -116,6 +171,13 @@ struct SettingsView: View {
         Binding(
             get: { settings.isEnabled },
             set: { settings.setEnabled($0) }
+        )
+    }
+
+    private func calendarEnabledBinding(for calendarIdentifier: String) -> Binding<Bool> {
+        Binding(
+            get: { settings.isCalendarEnabled(calendarIdentifier: calendarIdentifier) },
+            set: { settings.setCalendarEnabled($0, calendarIdentifier: calendarIdentifier) }
         )
     }
 

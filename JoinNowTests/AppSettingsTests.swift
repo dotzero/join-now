@@ -141,6 +141,24 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertTrue(restoredSettings.isDismissed(alertID: "different-id", startDate: startDate))
     }
 
+    @MainActor
+    func testDisabledCalendarPersistsAndNewCalendarsAreEnabled() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let settings = AppSettings(defaults: defaults)
+
+        XCTAssertTrue(settings.isCalendarEnabled(calendarIdentifier: "new-calendar"))
+
+        settings.setCalendarEnabled(false, calendarIdentifier: "work-calendar")
+
+        let restoredSettings = AppSettings(defaults: defaults)
+        XCTAssertFalse(restoredSettings.isCalendarEnabled(calendarIdentifier: "work-calendar"))
+
+        restoredSettings.setCalendarEnabled(true, calendarIdentifier: "work-calendar")
+        XCTAssertTrue(AppSettings(defaults: defaults).isCalendarEnabled(calendarIdentifier: "work-calendar"))
+    }
+
     private func makeDefaults() -> (suiteName: String, defaults: UserDefaults) {
         let suiteName = "JoinNowTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suiteName)!

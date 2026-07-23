@@ -99,7 +99,8 @@ final class ReminderScheduler {
         guard !event.isAllDay,
               event.endDate > now,
               event.startDate >= now,
-              event.status != .canceled
+              event.status != .canceled,
+              settings.isCalendarEnabled(calendarIdentifier: event.calendar.calendarIdentifier)
         else {
             return false
         }

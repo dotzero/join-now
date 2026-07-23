@@ -6,7 +6,7 @@ import SwiftUI
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let settings = AppSettings()
 
-    private let calendarService = CalendarService()
+    let calendarService = CalendarService()
     private let linkExtractor = MeetingLinkExtractor()
     private var statusBarController: StatusBarController?
     private var alertWindowController: AlertWindowController?
@@ -49,20 +49,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if settingsWindow == nil {
             let view = SettingsView(
                 settings: settings,
+                calendarService: calendarService,
                 onPreview: { [weak self] in self?.showAlertPreview() }
             )
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 600, height: 360),
+                contentRect: NSRect(x: 0, y: 0, width: 600, height: 350),
                 styleMask: [.titled, .closable, .miniaturizable],
                 backing: .buffered,
                 defer: false
             )
             window.title = "JoinNow Settings"
-            window.minSize = NSSize(width: 600, height: 360)
+            window.minSize = NSSize(width: 600, height: 340)
             window.contentView = NSHostingView(rootView: view)
             window.center()
             window.isReleasedWhenClosed = false
             settingsWindow = window
+        } else {
+            settingsWindow?.contentView = NSHostingView(
+                rootView: SettingsView(
+                    settings: settings,
+                    calendarService: calendarService,
+                    onPreview: { [weak self] in self?.showAlertPreview() }
+                )
+            )
         }
 
         settingsWindow?.makeKeyAndOrderFront(nil)
