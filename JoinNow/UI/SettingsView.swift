@@ -27,6 +27,9 @@ struct SettingsView: View {
         .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth, minHeight: 400)
         .task {
             calendars = await calendarService.calendars()
+            settings.restoreCalendarSelectionIfAllDisabled(
+                availableCalendarIdentifiers: Set(calendars.map(\.id))
+            )
             hasLoadedCalendars = true
         }
     }
@@ -177,7 +180,13 @@ struct SettingsView: View {
     private func calendarEnabledBinding(for calendarIdentifier: String) -> Binding<Bool> {
         Binding(
             get: { settings.isCalendarEnabled(calendarIdentifier: calendarIdentifier) },
-            set: { settings.setCalendarEnabled($0, calendarIdentifier: calendarIdentifier) }
+            set: {
+                settings.setCalendarEnabled(
+                    $0,
+                    calendarIdentifier: calendarIdentifier,
+                    availableCalendarIdentifiers: Set(calendars.map(\.id))
+                )
+            }
         )
     }
 

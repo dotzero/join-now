@@ -150,13 +150,60 @@ final class AppSettingsTests: XCTestCase {
 
         XCTAssertTrue(settings.isCalendarEnabled(calendarIdentifier: "new-calendar"))
 
-        settings.setCalendarEnabled(false, calendarIdentifier: "work-calendar")
+        settings.setCalendarEnabled(
+            false,
+            calendarIdentifier: "work-calendar",
+            availableCalendarIdentifiers: ["work-calendar", "personal-calendar"]
+        )
 
         let restoredSettings = AppSettings(defaults: defaults)
         XCTAssertFalse(restoredSettings.isCalendarEnabled(calendarIdentifier: "work-calendar"))
 
-        restoredSettings.setCalendarEnabled(true, calendarIdentifier: "work-calendar")
+        restoredSettings.setCalendarEnabled(
+            true,
+            calendarIdentifier: "work-calendar",
+            availableCalendarIdentifiers: ["work-calendar", "personal-calendar"]
+        )
         XCTAssertTrue(AppSettings(defaults: defaults).isCalendarEnabled(calendarIdentifier: "work-calendar"))
+    }
+
+    @MainActor
+    func testKeepsOneCalendarEnabled() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let settings = AppSettings(defaults: defaults)
+        let calendarIdentifiers = Set(["work-calendar", "personal-calendar"])
+
+        settings.setCalendarEnabled(
+            false,
+            calendarIdentifier: "work-calendar",
+            availableCalendarIdentifiers: calendarIdentifiers
+        )
+        settings.setCalendarEnabled(
+            false,
+            calendarIdentifier: "personal-calendar",
+            availableCalendarIdentifiers: calendarIdentifiers
+        )
+
+        XCTAssertFalse(settings.isCalendarEnabled(calendarIdentifier: "work-calendar"))
+        XCTAssertTrue(settings.isCalendarEnabled(calendarIdentifier: "personal-calendar"))
+    }
+
+    @MainActor
+    func testRestoresCalendarsWhenEveryAvailableCalendarIsDisabled() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let calendarIdentifiers = Set(["work-calendar", "personal-calendar"])
+        defaults.set(Array(calendarIdentifiers), forKey: "disabledCalendarIdentifiers")
+
+        let settings = AppSettings(defaults: defaults)
+        settings.restoreCalendarSelectionIfAllDisabled(
+            availableCalendarIdentifiers: calendarIdentifiers
+        )
+
+        XCTAssertTrue(settings.isCalendarEnabled(calendarIdentifier: "work-calendar"))
+        XCTAssertTrue(settings.isCalendarEnabled(calendarIdentifier: "personal-calendar"))
     }
 
     private func makeDefaults() -> (suiteName: String, defaults: UserDefaults) {

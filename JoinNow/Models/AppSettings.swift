@@ -134,9 +134,21 @@ final class AppSettings: ObservableObject {
         !disabledCalendarIdentifiers.contains(calendarIdentifier)
     }
 
-    func setCalendarEnabled(_ enabled: Bool, calendarIdentifier: String) {
+    func setCalendarEnabled(
+        _ enabled: Bool,
+        calendarIdentifier: String,
+        availableCalendarIdentifiers: Set<String>
+    ) {
         guard isCalendarEnabled(calendarIdentifier: calendarIdentifier) != enabled else {
             return
+        }
+
+        if !enabled {
+            let enabledCalendarIdentifiers = availableCalendarIdentifiers
+                .subtracting(disabledCalendarIdentifiers)
+            guard enabledCalendarIdentifiers.count > 1 else {
+                return
+            }
         }
 
         if enabled {
@@ -145,6 +157,17 @@ final class AppSettings: ObservableObject {
             disabledCalendarIdentifiers.insert(calendarIdentifier)
         }
 
+        defaults.set(Array(disabledCalendarIdentifiers), forKey: Key.disabledCalendarIdentifiers)
+    }
+
+    func restoreCalendarSelectionIfAllDisabled(availableCalendarIdentifiers: Set<String>) {
+        guard !availableCalendarIdentifiers.isEmpty,
+              availableCalendarIdentifiers.isSubset(of: disabledCalendarIdentifiers)
+        else {
+            return
+        }
+
+        disabledCalendarIdentifiers.subtract(availableCalendarIdentifiers)
         defaults.set(Array(disabledCalendarIdentifiers), forKey: Key.disabledCalendarIdentifiers)
     }
 

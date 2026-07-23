@@ -87,7 +87,11 @@ final class ReminderSchedulerTests: XCTestCase {
 
         let event = makeEvent(startOffset: 60)
         let settings = AppSettings(defaults: defaults)
-        settings.setCalendarEnabled(false, calendarIdentifier: event.calendar.calendarIdentifier)
+        settings.setCalendarEnabled(
+            false,
+            calendarIdentifier: event.calendar.calendarIdentifier,
+            availableCalendarIdentifiers: [event.calendar.calendarIdentifier, "other-calendar"]
+        )
         let presenter = SpyAlertPresenter()
         let scheduler = ReminderScheduler(
             settings: settings,

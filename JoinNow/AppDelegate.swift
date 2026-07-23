@@ -36,10 +36,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onQuit: { NSApp.terminate(nil) }
         )
 
-        reminderScheduler?.start()
-
         Task {
-            _ = await calendarService.requestAccessIfNeeded()
+            let calendars = await calendarService.calendars()
+            settings.restoreCalendarSelectionIfAllDisabled(
+                availableCalendarIdentifiers: Set(calendars.map(\.id))
+            )
+            reminderScheduler?.start()
         }
     }
 
