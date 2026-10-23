@@ -85,11 +85,10 @@ final class ReminderScheduler {
             )
         }
 
-        guard let candidate = candidates.sorted(by: sortCandidates).first else {
-            return
-        }
-
-        guard alertPresenter?.showAlert(for: candidate.event, meetingURL: candidate.meetingURL) == true else {
+        guard let candidate = candidates.sorted(by: sortCandidates).first, alertPresenter?.showAlert(
+            for: candidate.event,
+            meetingURL: candidate.meetingURL
+        ) == true else {
             return
         }
 
