@@ -40,8 +40,9 @@ check: lint test ## Run linting and tests
 
 ---------------: ## ---------------
 
-publish: release ## Package the app into DMG formats and publish to GitHub releases
+publish: ## Package the app into DMG formats and publish to GitHub releases
 	@test -n "$(VERSION)" || { echo "usage: make publish VERSION=x.y.z [PUBLISH=1]" >&2; exit 1; }
+	@$(MAKE) release
 	./scripts/package.sh $(VERSION) $(if $(PUBLISH),--publish,)
 
 ---------------: ## ---------------
