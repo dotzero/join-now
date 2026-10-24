@@ -57,17 +57,15 @@ SHA="$(shasum -a 256 "$DMG" | awk '{print $1}')"
 TAP_DIR="$(mktemp -d)"
 gh repo clone "$TAP_REPO" "$TAP_DIR" -- --depth=1 >/dev/null
 CASK="$TAP_DIR/Casks/join-now.rb"
-if [ ! -f "$CASK" ]; then
-  mkdir -p "$TAP_DIR/Casks"
-  cp "$ROOT/packaging/join-now.rb" "$CASK" # first publish: seed from the in-repo source of truth
-fi
+mkdir -p "$TAP_DIR/Casks"
+cp -f "$ROOT/packaging/join-now.rb" "$CASK"
 sed -i '' -E "s/^( *version )\".*\"/\1\"$VERSION\"/" "$CASK"
 sed -i '' -E "s/^( *sha256 )\".*\"/\1\"$SHA\"/" "$CASK"
 
 git profile -C "$TAP_DIR" use home
 git -C "$TAP_DIR" add Casks/join-now.rb
 if git -C "$TAP_DIR" diff --cached --quiet; then
-  echo "==> cask already at $VERSION, nothing to push"
+  echo "==> cask unchanged, nothing to push"
 else
   git -C "$TAP_DIR" commit -m "$APP_NAME $VERSION"
   git -C "$TAP_DIR" push
