@@ -13,8 +13,10 @@ cask "join-now" do
   app "JoinNow.app"
   binary "#{appdir}/JoinNow.app/Contents/MacOS/JoinNow", target: "JoinNow"
 
-  postflight do
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{appdir}/JoinNow.app"]
+  postflight_steps do
+    on_macos do
+      run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ .AppDir }}/JoinNow.app"]
+    end
   end
 
   zap trash: [
