@@ -7,6 +7,7 @@ final class AppSettings: ObservableObject {
         static let leadTimeMinutes = "leadTimeMinutes"
         static let onlyEventsWithMeetingLink = "onlyEventsWithMeetingLink"
         static let alertSound = "alertSound"
+        static let isAlertSoundEnabled = "isAlertSoundEnabled"
         static let alertBackgroundOpacityPercent = "alertBackgroundOpacityPercent"
         static let alertBackgroundColor = "alertBackgroundColor"
         static let alertTextColor = "alertTextColor"
@@ -36,6 +37,8 @@ final class AppSettings: ObservableObject {
 
     @Published private(set) var alertSound: AlertSound
 
+    @Published private(set) var isAlertSoundEnabled: Bool
+
     @Published private(set) var alertBackgroundOpacityPercent: Double
 
     @Published private(set) var alertBackgroundColor: Color
@@ -58,6 +61,13 @@ final class AppSettings: ObservableObject {
         if defaults.object(forKey: Key.isEnabled) == nil {
             defaults.set(true, forKey: Key.isEnabled)
         }
+        if defaults.object(forKey: Key.isAlertSoundEnabled) == nil {
+            let wasDisabled = defaults.string(forKey: Key.alertSound) == "none"
+            defaults.set(!wasDisabled, forKey: Key.isAlertSoundEnabled)
+            if wasDisabled {
+                defaults.set(Self.defaultAlertSound.rawValue, forKey: Key.alertSound)
+            }
+        }
 
         let storedLeadTime = defaults.integer(forKey: Key.leadTimeMinutes)
         self.isEnabled = defaults.bool(forKey: Key.isEnabled)
@@ -65,6 +75,7 @@ final class AppSettings: ObservableObject {
         self.onlyEventsWithMeetingLink = defaults.bool(forKey: Key.onlyEventsWithMeetingLink)
         self.launchAtStartupEnabled = launchAtLoginService.isEnabled
         self.alertSound = Self.alertSound(for: defaults.string(forKey: Key.alertSound))
+        self.isAlertSoundEnabled = defaults.bool(forKey: Key.isAlertSoundEnabled)
         if defaults.object(forKey: Key.alertBackgroundOpacityPercent) == nil {
             self.alertBackgroundOpacityPercent = Self.defaultAlertBackgroundOpacityPercent
         } else {
@@ -176,15 +187,6 @@ final class AppSettings: ObservableObject {
         defaults.set(Array(disabledCalendarIdentifiers), forKey: Key.disabledCalendarIdentifiers)
     }
 
-    func setAlertSound(_ value: AlertSound) {
-        guard alertSound != value else {
-            return
-        }
-
-        alertSound = value
-        defaults.set(value.rawValue, forKey: Key.alertSound)
-    }
-
     func setAlertBackgroundOpacityPercent(_ value: Double) {
         let normalizedValue = Self.normalizedAlertBackgroundOpacityPercent(value)
         guard alertBackgroundOpacityPercent != normalizedValue else {
@@ -274,16 +276,6 @@ final class AppSettings: ObservableObject {
         min(max(value, minimumAlertBackgroundOpacityPercent), 100)
     }
 
-    private static func alertSound(for rawValue: String?) -> AlertSound {
-        guard let rawValue,
-              let alertSound = AlertSound(rawValue: rawValue)
-        else {
-            return defaultAlertSound
-        }
-
-        return alertSound
-    }
-
     private static func color(forKey key: String, defaultValue: Color, defaults: UserDefaults) -> Color {
         guard let components = defaults.array(forKey: key) as? [Double],
               components.count == 4
@@ -311,23 +303,57 @@ final class AppSettings: ObservableObject {
     }
 }
 
+extension AppSettings {
+    func setAlertSound(_ value: AlertSound) {
+        guard alertSound != value else {
+            return
+        }
+
+        alertSound = value
+        defaults.set(value.rawValue, forKey: Key.alertSound)
+    }
+
+    func setAlertSoundEnabled(_ value: Bool) {
+        guard isAlertSoundEnabled != value else {
+            return
+        }
+
+        isAlertSoundEnabled = value
+        defaults.set(value, forKey: Key.isAlertSoundEnabled)
+    }
+
+    private static func alertSound(for rawValue: String?) -> AlertSound {
+        guard let rawValue,
+              let alertSound = AlertSound(rawValue: rawValue)
+        else {
+            return defaultAlertSound
+        }
+
+        return alertSound
+    }
+}
+
 enum AlertSound: String, CaseIterable, Identifiable {
-    case none
-    case hero
+    case basso
+    case blow
+    case bottle
+    case frog
+    case funk
     case glass
+    case hero
+    case morse
+    case ping
+    case pop
+    case purr
+    case sosumi
+    case submarine
+    case tink
 
     var id: String {
         rawValue
     }
 
     var displayName: String {
-        switch self {
-        case .none:
-            "Off"
-        case .hero:
-            "Hero"
-        case .glass:
-            "Glass"
-        }
+        rawValue.capitalized
     }
 }

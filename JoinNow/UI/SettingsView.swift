@@ -56,8 +56,13 @@ struct SettingsView: View {
 
                 Toggle("Only events with meeting links", isOn: onlyMeetingLinksBinding)
                     .toggleStyle(.checkbox)
+            }
 
-                Picker("Alert sound", selection: alertSoundBinding) {
+            Section("Sound") {
+                Toggle("Play alert sound", isOn: alertSoundEnabledBinding)
+                    .toggleStyle(.checkbox)
+
+                Picker("Sound", selection: alertSoundBinding) {
                     ForEach(AlertSound.allCases) { sound in
                         Text(sound.displayName).tag(sound)
                     }
@@ -188,6 +193,13 @@ struct SettingsView: View {
         Binding(
             get: { settings.alertSound },
             set: { settings.setAlertSound($0) }
+        )
+    }
+
+    private var alertSoundEnabledBinding: Binding<Bool> {
+        Binding(
+            get: { settings.isAlertSoundEnabled },
+            set: { settings.setAlertSoundEnabled($0) }
         )
     }
 

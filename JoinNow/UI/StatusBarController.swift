@@ -60,7 +60,15 @@ final class StatusBarController {
         addLeadTimeItems(to: menu)
 
         menu.addItem(NSMenuItem.separator())
-        addAlertSoundItems(to: menu)
+
+        let soundItem = NSMenuItem(
+            title: "Play alert sound",
+            action: #selector(toggleAlertSound),
+            keyEquivalent: ""
+        )
+        soundItem.target = self
+        soundItem.state = settings.isAlertSoundEnabled ? .on : .off
+        menu.addItem(soundItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -101,22 +109,6 @@ final class StatusBarController {
         }
     }
 
-    private func addAlertSoundItems(to menu: NSMenu) {
-        menu.addItem(disabledHeaderItem(title: "Alert sound"))
-
-        for sound in AlertSound.allCases {
-            let item = NSMenuItem(
-                title: sound.displayName,
-                action: #selector(setAlertSound),
-                keyEquivalent: ""
-            )
-            item.target = self
-            item.representedObject = sound.rawValue
-            item.state = settings.alertSound == sound ? .on : .off
-            menu.addItem(item)
-        }
-    }
-
     private func disabledHeaderItem(title: String) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
@@ -137,14 +129,8 @@ final class StatusBarController {
         rebuildMenu()
     }
 
-    @objc private func setAlertSound(_ sender: NSMenuItem) {
-        guard let rawValue = sender.representedObject as? String,
-              let sound = AlertSound(rawValue: rawValue)
-        else {
-            return
-        }
-
-        settings.setAlertSound(sound)
+    @objc private func toggleAlertSound() {
+        settings.setAlertSoundEnabled(!settings.isAlertSoundEnabled)
         rebuildMenu()
     }
 

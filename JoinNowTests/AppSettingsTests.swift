@@ -13,6 +13,7 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertEqual(settings.leadTimeMinutes, 5)
         XCTAssertFalse(settings.onlyEventsWithMeetingLink)
         XCTAssertEqual(settings.alertSound, .hero)
+        XCTAssertTrue(settings.isAlertSoundEnabled)
         XCTAssertEqual(settings.alertBackgroundOpacityPercent, 80.0)
     }
 
@@ -125,8 +126,48 @@ final class AppSettingsTests: XCTestCase {
         settings.setAlertSound(.glass)
         XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .glass)
 
-        settings.setAlertSound(.none)
-        XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .none)
+        settings.setAlertSound(.sosumi)
+        XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .sosumi)
+    }
+
+    @MainActor
+    func testSoundEnabledStateIsIndependentOfSelectedSound() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+
+        let settings = AppSettings(defaults: defaults)
+        settings.setAlertSoundEnabled(false)
+        settings.setAlertSound(.sosumi)
+
+        let restoredSettings = AppSettings(defaults: defaults)
+        XCTAssertFalse(restoredSettings.isAlertSoundEnabled)
+        XCTAssertEqual(restoredSettings.alertSound, .sosumi)
+
+        restoredSettings.setAlertSoundEnabled(true)
+        XCTAssertEqual(AppSettings(defaults: defaults).alertSound, .sosumi)
+        XCTAssertTrue(AppSettings(defaults: defaults).isAlertSoundEnabled)
+    }
+
+    @MainActor
+    func testMigratesLegacyOffSoundWithoutEnablingIt() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set("none", forKey: "alertSound")
+
+        let settings = AppSettings(defaults: defaults)
+
+        XCTAssertEqual(settings.alertSound, .hero)
+        XCTAssertFalse(settings.isAlertSoundEnabled)
+        XCTAssertEqual(defaults.string(forKey: "alertSound"), "hero")
+        XCTAssertFalse(defaults.bool(forKey: "isAlertSoundEnabled"))
+    }
+
+    func testIncludesEverySystemAlertSound() throws {
+        let filenames = try FileManager.default.contentsOfDirectory(atPath: "/System/Library/Sounds")
+        let systemSoundNames = Set(filenames.filter { $0.hasSuffix(".aiff") }.map { String($0.dropLast(5)) })
+        let availableSoundNames = Set(AlertSound.allCases.map(\.displayName))
+
+        XCTAssertEqual(availableSoundNames, systemSoundNames)
     }
 
     @MainActor

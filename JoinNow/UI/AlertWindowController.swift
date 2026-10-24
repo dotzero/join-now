@@ -118,7 +118,9 @@ final class AlertWindowController: AlertPresenting {
         panel.orderFrontRegardless()
 
         self.panel = panel
-        soundPlayer.play(settings.alertSound)
+        if settings.isAlertSoundEnabled {
+            soundPlayer.play(settings.alertSound)
+        }
         return true
     }
 
@@ -152,13 +154,12 @@ protocol AlertSoundPlaying: AnyObject {
 @MainActor
 private final class SystemAlertSoundPlayer: AlertSoundPlaying {
     func play(_ sound: AlertSound) {
-        guard let systemSoundName = sound.systemSoundName,
-              let sound = NSSound(named: systemSoundName)
+        guard let systemSound = NSSound(named: NSSound.Name(sound.displayName))
         else {
             return
         }
 
-        sound.play()
+        systemSound.play()
     }
 }
 
@@ -172,19 +173,6 @@ private struct AlertPresentation {
     let onJoin: (URL) -> Void
     let onOpenTalk: (URL) -> Void
     let onDismiss: () -> Void
-}
-
-private extension AlertSound {
-    var systemSoundName: NSSound.Name? {
-        switch self {
-        case .none:
-            nil
-        case .hero:
-            NSSound.Name("Hero")
-        case .glass:
-            NSSound.Name("Glass")
-        }
-    }
 }
 
 private final class AlertPanel: NSPanel {
