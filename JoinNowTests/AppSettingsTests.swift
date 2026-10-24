@@ -95,10 +95,24 @@ final class AppSettingsTests: XCTestCase {
         let settings = AppSettings(defaults: defaults)
 
         settings.setAlertBackgroundOpacityPercent(-10)
-        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 0)
+        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 5)
+
+        settings.setAlertBackgroundOpacityPercent(0)
+        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 5)
 
         settings.setAlertBackgroundOpacityPercent(150)
         XCTAssertEqual(settings.alertBackgroundOpacityPercent, 100)
+    }
+
+    @MainActor
+    func testClampsStoredAlertBackgroundOpacityBelowMinimum() {
+        let (suiteName, defaults) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        defaults.set(0, forKey: "alertBackgroundOpacityPercent")
+
+        let settings = AppSettings(defaults: defaults)
+
+        XCTAssertEqual(settings.alertBackgroundOpacityPercent, 5)
     }
 
     @MainActor

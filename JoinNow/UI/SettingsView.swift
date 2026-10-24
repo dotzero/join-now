@@ -90,7 +90,7 @@ struct SettingsView: View {
                     HStack(spacing: 12) {
                         Slider(
                             value: alertBackgroundOpacityBinding,
-                            in: 0 ... 100,
+                            in: AppSettings.minimumAlertBackgroundOpacityPercent ... 100,
                             step: 1
                         ) {
                             Text("Background opacity")
