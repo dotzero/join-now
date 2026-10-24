@@ -13,12 +13,12 @@
 		010000000000000000000104 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000004 /* CalendarService.swift */; };
 		010000000000000000000105 /* MeetingLinkExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000005 /* MeetingLinkExtractor.swift */; };
 		010000000000000000000106 /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000006 /* ReminderScheduler.swift */; };
-		010000000000000000000112 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000015 /* LaunchAtLoginService.swift */; };
 		010000000000000000000107 /* AlertWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000007 /* AlertWindowController.swift */; };
 		010000000000000000000108 /* MeetingAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000008 /* MeetingAlertView.swift */; };
 		010000000000000000000109 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000009 /* SettingsView.swift */; };
 		010000000000000000000110 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000010 /* StatusBarController.swift */; };
 		010000000000000000000111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000014 /* Assets.xcassets */; };
+		010000000000000000000112 /* LaunchAtLoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010000000000000000000015 /* LaunchAtLoginService.swift */; };
 		020000000000000000000101 /* MeetingLinkExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000001 /* MeetingLinkExtractorTests.swift */; };
 		020000000000000000000102 /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000002 /* AppSettingsTests.swift */; };
 		020000000000000000000103 /* ReminderSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020000000000000000000003 /* ReminderSchedulerTests.swift */; };
@@ -42,7 +42,6 @@
 		010000000000000000000004 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		010000000000000000000005 /* MeetingLinkExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingLinkExtractor.swift; sourceTree = "<group>"; };
 		010000000000000000000006 /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
-		010000000000000000000015 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		010000000000000000000007 /* AlertWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWindowController.swift; sourceTree = "<group>"; };
 		010000000000000000000008 /* MeetingAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingAlertView.swift; sourceTree = "<group>"; };
 		010000000000000000000009 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -51,6 +50,7 @@
 		010000000000000000000012 /* JoinNow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JoinNow.entitlements; sourceTree = "<group>"; };
 		010000000000000000000013 /* JoinNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JoinNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		010000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		010000000000000000000015 /* LaunchAtLoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginService.swift; sourceTree = "<group>"; };
 		020000000000000000000001 /* MeetingLinkExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingLinkExtractorTests.swift; sourceTree = "<group>"; };
 		020000000000000000000002 /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 		020000000000000000000003 /* ReminderSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSchedulerTests.swift; sourceTree = "<group>"; };
@@ -197,7 +197,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2650;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					010000000000000000000400 = {
 						CreatedOnToolsVersion = 26.5;
@@ -354,6 +354,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -419,6 +420,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -464,13 +466,13 @@
 				);
 				MARKETING_VERSION = 0.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dotzero.JoinNow;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_BUNDLE_PACKAGE_TYPE = APPL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_WARN_CONCURRENCY = YES;
 				SWIFT_VERSION = 6.0;
+				SWIFT_WARN_CONCURRENCY = YES;
 			};
 			name = Debug;
 		};
@@ -494,13 +496,13 @@
 				);
 				MARKETING_VERSION = 0.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dotzero.JoinNow;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_BUNDLE_PACKAGE_TYPE = APPL;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
-				SWIFT_WARN_CONCURRENCY = YES;
 				SWIFT_VERSION = 6.0;
+				SWIFT_WARN_CONCURRENCY = YES;
 			};
 			name = Release;
 		};
@@ -510,6 +512,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -536,6 +539,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
