@@ -2,29 +2,36 @@ import SwiftUI
 
 struct SettingsView: View {
     private enum Layout {
-        static let contentWidth: CGFloat = 600
-        static let labelWidth: CGFloat = 220
-        static let calendarListWidth: CGFloat = 360
-        static let calendarListHeight: CGFloat = 240
+        static let contentWidth: CGFloat = 560
+        static let contentHeight: CGFloat = 440
     }
 
     @ObservedObject var settings: AppSettings
     let calendarService: CalendarEventFetching
     let onPreview: () -> Void
+    var onPaneChange: (String) -> Void = { _ in }
+    @AppStorage("selectedSettingsPane") private var selectedPane = "general"
     @State private var calendars = [CalendarInfo]()
     @State private var hasLoadedCalendars = false
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedPane) {
             generalSettings
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .tabItem { Text("General") }
+                .tabItem { Label("General", systemImage: "gearshape") }
+                .tag("general")
+
+            appearanceSettings
+                .tabItem { Label("Appearance", systemImage: "paintbrush") }
+                .tag("appearance")
 
             calendarsSettings
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .tabItem { Text("Calendars") }
+                .tabItem { Label("Calendars", systemImage: "calendar") }
+                .tag("calendars")
         }
-        .frame(minWidth: Layout.contentWidth, idealWidth: Layout.contentWidth, minHeight: 400)
+        .frame(width: Layout.contentWidth, height: Layout.contentHeight)
+        .onChange(of: selectedPane, initial: true) { _, pane in
+            onPaneChange(pane.capitalized)
+        }
         .task {
             calendars = await calendarService.calendars()
             settings.restoreCalendarSelectionIfAllDisabled(
@@ -35,58 +42,60 @@ struct SettingsView: View {
     }
 
     private var generalSettings: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 24, verticalSpacing: 16) {
-                settingsRow("Enabled") {
-                    Toggle("", isOn: enabledBinding)
-                        .labelsHidden()
-                }
+        Form {
+            Section("Reminders") {
+                Toggle("Enable reminders", isOn: enabledBinding)
+                    .toggleStyle(.switch)
 
-                settingsRow("Launch automatically at startup") {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Toggle("", isOn: launchAtStartupBinding)
-                            .labelsHidden()
-
-                        if let errorMessage = settings.launchAtStartupErrorMessage {
-                            Text(errorMessage)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
+                Picker("Alert before event", selection: leadTimeBinding) {
+                    ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
+                        Text("\(minutes) min").tag(minutes)
                     }
                 }
+                .pickerStyle(.menu)
 
-                settingsRow("Alert lead time") {
-                    Picker("", selection: leadTimeBinding) {
-                        ForEach(AppSettings.allowedLeadTimes, id: \.self) { minutes in
-                            Text("\(minutes) min").tag(minutes)
-                        }
+                Toggle("Only events with meeting links", isOn: onlyMeetingLinksBinding)
+                    .toggleStyle(.checkbox)
+
+                Picker("Alert sound", selection: alertSoundBinding) {
+                    ForEach(AlertSound.allCases) { sound in
+                        Text(sound.displayName).tag(sound)
                     }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
                 }
+                .pickerStyle(.menu)
+            }
 
-                settingsRow("Events with links only") {
-                    Toggle("", isOn: onlyMeetingLinksBinding)
-                        .labelsHidden()
+            Section("Startup") {
+                Toggle("Open at login", isOn: launchAtStartupBinding)
+                    .toggleStyle(.checkbox)
+
+                if let errorMessage = settings.launchAtStartupErrorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.red)
                 }
+            }
 
-                settingsRow("Alert sound") {
-                    Picker("", selection: alertSoundBinding) {
-                        ForEach(AlertSound.allCases) { sound in
-                            Text(sound.displayName).tag(sound)
-                        }
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.segmented)
-                }
+            Text(appVersionLabel)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .formStyle(.grouped)
+    }
 
-                settingsRow("Background opacity") {
+    private var appearanceSettings: some View {
+        Form {
+            Section("Alert window") {
+                LabeledContent("Background opacity") {
                     HStack(spacing: 12) {
                         Slider(
                             value: alertBackgroundOpacityBinding,
                             in: 0 ... 100,
                             step: 1
-                        )
+                        ) {
+                            Text("Background opacity")
+                        }
+                        .labelsHidden()
 
                         Text("\(Int(settings.alertBackgroundOpacityPercent.rounded()))%")
                             .foregroundStyle(.secondary)
@@ -95,79 +104,43 @@ struct SettingsView: View {
                     }
                 }
 
-                settingsRow("Background color") {
-                    ColorPicker("", selection: alertBackgroundColorBinding, supportsOpacity: false)
-                        .labelsHidden()
-                }
-
-                settingsRow("Text color") {
-                    ColorPicker("", selection: alertTextColorBinding, supportsOpacity: false)
-                        .labelsHidden()
-                }
+                ColorPicker("Background color", selection: alertBackgroundColorBinding, supportsOpacity: false)
+                ColorPicker("Text color", selection: alertTextColorBinding, supportsOpacity: false)
             }
 
-            Divider()
-
-            HStack {
-                Text(appVersionLabel)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Spacer()
-
-                Button("Preview", action: onPreview)
-                    .keyboardShortcut("p")
-            }
+            Button("Preview Alert", action: onPreview)
+                .keyboardShortcut("p")
         }
-        .padding(.horizontal, 24)
-        .padding(.bottom, 24)
-        .padding(.top, 24)
+        .formStyle(.grouped)
     }
 
     private var calendarsSettings: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Choose the calendars JoinNow should use for reminders.\nEvents from unchecked calendars are ignored.")
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Group {
+        Form {
+            Section {
                 if !hasLoadedCalendars {
-                    ProgressView()
+                    ProgressView("Loading calendars…")
                 } else if calendars.isEmpty {
                     Text("No calendars are available.")
                         .foregroundStyle(.secondary)
                 } else {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
-                            ForEach(calendars) { calendar in
-                                Toggle(calendar.title, isOn: calendarEnabledBinding(for: calendar.id))
-                                    .toggleStyle(.checkbox)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ForEach(calendars) { calendar in
+                        Toggle(calendar.title, isOn: calendarEnabledBinding(for: calendar.id))
+                            .toggleStyle(.checkbox)
+                            .disabled(enabledCalendarCount == 1 && settings
+                                .isCalendarEnabled(calendarIdentifier: calendar.id))
                     }
-                    .frame(maxHeight: Layout.calendarListHeight)
                 }
+            } header: {
+                Text("Calendars")
+            } footer: {
+                Text("Choose the calendars JoinNow uses for reminders. At least one calendar must stay selected.")
             }
-            .frame(width: Layout.calendarListWidth, alignment: .leading)
         }
-        .padding(.horizontal, 24)
-        .padding(.bottom, 24)
-        .padding(.top, 24)
+        .formStyle(.grouped)
     }
 
-    private func settingsRow(
-        _ title: String,
-        @ViewBuilder control: () -> some View
-    ) -> some View {
-        GridRow {
-            Text(title)
-                .foregroundStyle(.primary)
-                .frame(width: Layout.labelWidth, alignment: .leading)
-
-            control()
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
+    private var enabledCalendarCount: Int {
+        calendars.filter { settings.isCalendarEnabled(calendarIdentifier: $0.id) }.count
     }
 
     private var enabledBinding: Binding<Bool> {

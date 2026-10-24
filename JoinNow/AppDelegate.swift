@@ -53,16 +53,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let view = SettingsView(
                 settings: settings,
                 calendarService: calendarService,
-                onPreview: { [weak self] in self?.showAlertPreview() }
+                onPreview: { [weak self] in self?.showAlertPreview() },
+                onPaneChange: { [weak self] in self?.settingsWindow?.title = $0 }
             )
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 600, height: 350),
-                styleMask: [.titled, .closable, .miniaturizable],
+                contentRect: NSRect(x: 0, y: 0, width: 560, height: 440),
+                styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false
             )
             window.title = "JoinNow Settings"
-            window.minSize = NSSize(width: 600, height: 340)
             window.contentView = NSHostingView(rootView: view)
             window.center()
             window.isReleasedWhenClosed = false
@@ -72,7 +72,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 rootView: SettingsView(
                     settings: settings,
                     calendarService: calendarService,
-                    onPreview: { [weak self] in self?.showAlertPreview() }
+                    onPreview: { [weak self] in self?.showAlertPreview() },
+                    onPaneChange: { [weak self] in self?.settingsWindow?.title = $0 }
                 )
             )
         }
