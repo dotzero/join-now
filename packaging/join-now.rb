@@ -15,7 +15,7 @@ cask "join-now" do
 
   postflight_steps do
     on_macos do
-      run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ .AppDir }}/JoinNow.app"]
+      run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{appdir}/JoinNow.app"]
     end
   end
 
